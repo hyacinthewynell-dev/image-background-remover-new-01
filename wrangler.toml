@@ -1,0 +1,7 @@
+name = "image-background-remover-new-01"
+compatibility_date = "2024-07-01"
+pages_build_output_dir = ".next"
+
+[vars]
+# Remove.bg API Key - Set in Cloudflare Pages dashboard
+# REMOVE_BG_API_KEY = "your-api-key-here"
