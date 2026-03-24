@@ -3,8 +3,6 @@ const nextConfig = {
   images: {
     unoptimized: true,
   },
-  // Cloudflare Pages 适配
-  output: 'standalone',
-}
+};
 
-module.exports = nextConfig
+module.exports = nextConfig;

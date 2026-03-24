@@ -53,7 +53,7 @@ export async function POST(request: NextRequest) {
     removeBgFormData.append("image_file", new Blob([buffer]), imageFile.name);
     removeBgFormData.append("size", "auto");
     removeBgFormData.append("output_format", "png");
-    removeBgFormData.append("bg_color", "none");
+
 
     const response = await fetch(REMOVE_BG_API_URL, {
       method: "POST",
