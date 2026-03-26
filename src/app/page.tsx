@@ -5,6 +5,7 @@ import UploadZone from "@/components/UploadZone";
 import ResultPreview from "@/components/ResultPreview";
 import StatusMessage from "@/components/StatusMessage";
 import LanguageSelector from "@/components/LanguageSelector";
+import UserButton from "@/components/UserButton";
 import { Language, translations } from "@/lib/translations";
 
 type Status = "idle" | "uploading" | "processing" | "success" | "error";
@@ -81,6 +82,7 @@ export default function Home() {
           </div>
           <div className="flex items-center gap-4">
             <LanguageSelector currentLang={lang} onChange={setLang} />
+            <UserButton />
             <a
               href="https://github.com/hyacinthewynell-dev/image-background-remover-new-01"
               target="_blank"
