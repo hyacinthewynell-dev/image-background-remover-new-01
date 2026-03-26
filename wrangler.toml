@@ -1,7 +1,7 @@
-name = "image-background-remover-new-01"
-compatibility_date = "2024-07-01"
-pages_build_output_dir = ".next"
+name = "bg-remover"
+compatibility_date = "2024-01-01"
+compatibility_flags = ["nodejs_compat"]
+pages_build_output_dir = ".vercel/output/static"
 
 [vars]
-# Remove.bg API Key - Set in Cloudflare Pages dashboard
-# REMOVE_BG_API_KEY = "your-api-key-here"
+REMOVE_BG_API_KEY = "dWrkFJcCLAZmNuNMsgMXPdfE"

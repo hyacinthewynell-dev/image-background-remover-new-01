@@ -1,12 +1,14 @@
 "use client";
 
 import { useCallback, useState } from "react";
+import { translations, Language } from "@/lib/translations";
 
 interface UploadZoneProps {
   onFileSelect: (file: File) => void;
+  t: typeof translations.en;
 }
 
-export default function UploadZone({ onFileSelect }: UploadZoneProps) {
+export default function UploadZone({ onFileSelect, t }: UploadZoneProps) {
   const [isDragOver, setIsDragOver] = useState(false);
 
   const handleDragOver = useCallback((e: React.DragEvent) => {
@@ -89,11 +91,11 @@ export default function UploadZone({ onFileSelect }: UploadZoneProps) {
       {/* Text */}
       <div className="space-y-2">
         <p className="text-lg font-medium text-cyber-text">
-          {isDragOver ? "Drop image here" : "Drag & drop your image here"}
+          {isDragOver ? "Drop image here" : t.dragDrop}
         </p>
         <p className="text-cyber-muted text-sm">
-          or{" "}
-          <span className="text-cyber-accent hover:underline">browse files</span>
+          {t.or}{" "}
+          <span className="text-cyber-accent hover:underline">{t.browseFiles}</span>
         </p>
       </div>
 
@@ -109,7 +111,7 @@ export default function UploadZone({ onFileSelect }: UploadZoneProps) {
           WebP
         </span>
         <span className="text-cyber-border">|</span>
-        <span>Max 10MB</span>
+        <span>{t.maxSize}</span>
       </div>
     </div>
   );

@@ -1,11 +1,14 @@
 "use client";
 
+import { translations } from "@/lib/translations";
+
 interface StatusMessageProps {
   status: "uploading" | "processing";
   fileName: string;
+  t: typeof translations.en;
 }
 
-export default function StatusMessage({ status, fileName }: StatusMessageProps) {
+export default function StatusMessage({ status, fileName, t }: StatusMessageProps) {
   const isUploading = status === "uploading";
 
   return (
@@ -29,7 +32,7 @@ export default function StatusMessage({ status, fileName }: StatusMessageProps) 
       {/* Status Text */}
       <div className="space-y-2">
         <h3 className="text-lg font-semibold text-cyber-text">
-          {isUploading ? "Uploading Image..." : "Removing Background..."}
+          {isUploading ? t.uploading : t.processing}
         </h3>
         <p className="text-sm text-cyber-muted truncate max-w-xs mx-auto">
           {fileName}

@@ -1,12 +1,14 @@
 "use client";
 
 import { useCallback } from "react";
+import { translations } from "@/lib/translations";
 
 interface ResultPreviewProps {
   original: string | null;
   result: string;
   fileName: string;
   onReset: () => void;
+  t: typeof translations.en;
 }
 
 export default function ResultPreview({
@@ -14,6 +16,7 @@ export default function ResultPreview({
   result,
   fileName,
   onReset,
+  t,
 }: ResultPreviewProps) {
   const handleDownload = useCallback(() => {
     const link = document.createElement("a");
@@ -30,7 +33,7 @@ export default function ResultPreview({
       <div className="grid grid-cols-2 gap-4">
         {/* Original */}
         <div className="space-y-2">
-          <p className="text-sm text-cyber-muted font-medium">Original</p>
+          <p className="text-sm text-cyber-muted font-medium">{t.preview}</p>
           <div className="relative rounded-lg overflow-hidden border border-cyber-border">
             {original && (
               <img
@@ -45,7 +48,7 @@ export default function ResultPreview({
         {/* Result */}
         <div className="space-y-2">
           <p className="text-sm text-cyber-muted font-medium">
-            Background Removed
+            {t.downloadResult.replace('Download ', '').replace(' Result', '')}
           </p>
           <div className="relative rounded-lg overflow-hidden border border-cyber-border checkerboard">
             {result && (
@@ -78,14 +81,14 @@ export default function ResultPreview({
               d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"
             />
           </svg>
-          Download PNG
+          {t.download}
         </button>
 
         <button
           onClick={onReset}
           className="px-6 py-3 rounded-lg border border-cyber-border text-cyber-text-dim hover:border-cyber-accent/50 hover:text-cyber-accent transition-all"
         >
-          Process Another
+          {t.newImage}
         </button>
       </div>
     </div>
