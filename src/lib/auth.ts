@@ -1,23 +1,13 @@
-import NextAuth, { DefaultSession } from "next-auth";
+import NextAuth, { NextAuthOptions } from "next-auth";
 import GoogleProvider from "next-auth/providers/google";
 
-declare module "next-auth" {
-  interface Session {
-    user?: {
-      id: string;
-    } & DefaultSession["user"];
-  }
-}
-
-export const { handlers, auth, signIn, signOut } = NextAuth({
+export const authOptions: NextAuthOptions = {
   providers: [
     GoogleProvider({
       clientId: process.env.GOOGLE_CLIENT_ID!,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
-      issuer: "https://accounts.google.com",
     }),
   ],
-  trustHost: true,
   callbacks: {
     session: async ({ session, token }) => {
       if (session.user && token.sub) {
@@ -29,4 +19,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
   pages: {
     signIn: "/login",
   },
-});
+  secret: process.env.NEXTAUTH_SECRET,
+};
+
+export default NextAuth(authOptions);
