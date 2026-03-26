@@ -48,7 +48,7 @@ export default function ResultPreview({
         {/* Result */}
         <div className="space-y-2">
           <p className="text-sm text-cyber-muted font-medium">
-            {t.downloadResult.replace('Download ', '').replace(' Result', '')}
+            {t.subtitle}
           </p>
           <div className="relative rounded-lg overflow-hidden border border-cyber-border checkerboard">
             {result && (

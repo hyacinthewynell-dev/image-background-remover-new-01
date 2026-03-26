@@ -104,7 +104,7 @@ export default function Home() {
               </span>
             </h2>
             <p className="text-cyber-muted">
-              {lang === "en" ? "Upload any image and get a transparent background in seconds" : t.subtitle}
+              {t.subtitle}
             </p>
           </div>
 
