@@ -1,5 +1,5 @@
-import NextAuth, { DefaultSession } from "next-auth";
-import { SupabaseAdapter } from "@auth/supabase-adapter";
+import NextAuth from "next-auth";
+import { DefaultSession } from "next-auth";
 
 declare module "next-auth" {
   interface Session {
@@ -10,10 +10,6 @@ declare module "next-auth" {
 }
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
-  adapter: SupabaseAdapter({
-    url: process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    secret: process.env.SUPABASE_SERVICE_ROLE_KEY!,
-  }),
   providers: [
     {
       id: "google",
@@ -44,9 +40,9 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
   ],
   trustHost: true,
   callbacks: {
-    session: async ({ session, user }) => {
-      if (session.user) {
-        session.user.id = user.id;
+    session: async ({ session, token }) => {
+      if (session.user && token.sub) {
+        session.user.id = token.sub;
       }
       return session;
     },
