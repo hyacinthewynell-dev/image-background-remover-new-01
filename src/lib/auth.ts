@@ -18,10 +18,20 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     {
       id: "google",
       name: "Google",
-      type: "oidc",
+      type: "oauth",
       clientId: process.env.GOOGLE_CLIENT_ID!,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
-      wellKnown: "https://accounts.google.com/.well-known/openid-configuration",
+      authorization: {
+        url: "https://accounts.google.com/o/oauth2/v2/auth",
+        params: {
+          scope: "openid email profile",
+          prompt: "consent",
+          access_type: "offline",
+          response_type: "code"
+        }
+      },
+      token: "https://oauth2.googleapis.com/token",
+      userinfo: "https://www.googleapis.com/oauth2/v3/userinfo",
       profile(profile: { sub: string; name: string; email: string; picture: string }) {
         return {
           id: profile.sub,
