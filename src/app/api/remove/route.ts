@@ -1,66 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/lib/auth";
 
 const REMOVE_BG_API_URL = "https://api.remove.bg/v1.0/removebg";
 const MAX_FILE_SIZE = 10 * 1024 * 1024;
 const ALLOWED_TYPES = ["image/png", "image/jpeg", "image/webp"];
 
-async function checkAndDeductCredits(userId: string, supabase: any) {
-  const { data: user } = await supabase
-    .from("users")
-    .select("credits")
-    .eq("id", userId)
-    .single();
-  
-  if (!user || user.credits <= 0) {
-    return { success: false, message: "No credits remaining. Please purchase more credits." };
-  }
-  
-  const newCredits = user.credits - 1;
-  
-  await supabase
-    .from("users")
-    .update({ credits: newCredits, updated_at: new Date().toISOString() })
-    .eq("id", userId);
-  
-  await supabase.from("transactions").insert({
-    user_id: userId,
-    type: "usage",
-    credits_delta: -1,
-    credits_remaining: newCredits,
-    description: "Image processing",
-  });
-  
-  return { success: true, credits_remaining: newCredits };
-}
-
 export async function POST(request: NextRequest) {
   try {
-    const session = await getServerSession(authOptions);
-    
-    if (!session?.user?.id) {
-      return NextResponse.json(
-        { success: false, error: "Please sign in to use this service", requireLogin: true },
-        { status: 401 }
-      );
-    }
-    
-    const { createClient } = await import("@supabase/supabase-js");
-    const supabase = createClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-    );
-    
-    const creditResult = await checkAndDeductCredits(session.user.id, supabase);
-    
-    if (!creditResult.success) {
-      return NextResponse.json(
-        { success: false, error: creditResult.message, noCredits: true },
-        { status: 402 }
-      );
-    }
-    
     const apiKey = process.env.REMOVE_BG_API_KEY;
     if (!apiKey) {
       return NextResponse.json(
@@ -126,7 +71,6 @@ export async function POST(request: NextRequest) {
         result: dataUri,
         originalName: imageFile.name,
       },
-      credits_remaining: creditResult.credits_remaining,
     });
   } catch (error) {
     console.error("API route error:", error);
