@@ -14,18 +14,6 @@ export const languages: { code: Language; name: string; nativeName: string }[] =
 ];
 
 type TranslationKey = 
-  | 'welcome'
-  | 'yourCredits'
-  | 'creditsDesc'
-  | 'noCredits'
-  | 'purchaseCredits'
-  | 'purchase'
-  | 'transactionHistory'
-  | 'noTransactions'
-  | 'signInRequired'
-  | 'signInDesc'
-  | 'cancel'
-  | 'signInGoogle' 
   | 'title'
   | 'subtitle'
   | 'dragDrop'
@@ -45,7 +33,19 @@ type TranslationKey =
   | 'feature3'
   | 'footer'
   | 'processingFailed'
-  | 'preview';
+  | 'preview'
+  | 'welcome'
+  | 'yourCredits'
+  | 'creditsDesc'
+  | 'noCredits'
+  | 'purchaseCredits'
+  | 'purchase'
+  | 'transactionHistory'
+  | 'noTransactions'
+  | 'signInRequired'
+  | 'signInDesc'
+  | 'cancel'
+  | 'signInGoogle';
 
 type Translations = {
   [K in Language]: {
@@ -75,6 +75,18 @@ export const translations: Translations = {
     footer: 'Powered by Remove.bg · Built with Next.js + Cloudflare',
     processingFailed: 'Processing Failed',
     preview: 'Original',
+    welcome: 'Welcome',
+    yourCredits: 'Your Credits',
+    creditsDesc: 'Credits are used for image processing',
+    noCredits: 'You have no credits remaining. Please purchase more.',
+    purchaseCredits: 'Purchase Credits',
+    purchase: 'Purchase',
+    transactionHistory: 'Transaction History',
+    noTransactions: 'No transactions yet',
+    signInRequired: 'Sign in Required',
+    signInDesc: 'Please sign in to process images. New users get 3 free credits!',
+    cancel: 'Cancel',
+    signInGoogle: 'Sign in with Google',
   },
   'zh-CN': {
     title: '一键抠图',
@@ -97,6 +109,18 @@ export const translations: Translations = {
     footer: '由 Remove.bg 提供支持 · 使用 Next.js + Cloudflare 构建',
     processingFailed: '处理失败',
     preview: '原图',
+    welcome: '欢迎',
+    yourCredits: '您的积分',
+    creditsDesc: '积分用于图片处理',
+    noCredits: '积分已用完，请购买更多',
+    purchaseCredits: '购买积分',
+    purchase: '购买',
+    transactionHistory: '交易记录',
+    noTransactions: '暂无交易记录',
+    signInRequired: '需要登录',
+    signInDesc: '请登录后使用服务，新用户获赠3个免费积分！',
+    cancel: '取消',
+    signInGoogle: '使用 Google 登录',
   },
   'zh-TW': {
     title: '一鍵去背',
@@ -119,12 +143,24 @@ export const translations: Translations = {
     footer: '由 Remove.bg 提供支援 · 使用 Next.js + Cloudflare 構建',
     processingFailed: '處理失敗',
     preview: '原圖',
+    welcome: '歡迎',
+    yourCredits: '您的積分',
+    creditsDesc: '積分用於圖片處理',
+    noCredits: '積分已用完，請購買更多',
+    purchaseCredits: '購買積分',
+    purchase: '購買',
+    transactionHistory: '交易記錄',
+    noTransactions: '暫無交易記錄',
+    signInRequired: '需要登入',
+    signInDesc: '請登入後使用服務，新用戶獲贈3個免費積分！',
+    cancel: '取消',
+    signInGoogle: '使用 Google 登入',
   },
   ja: {
     title: 'ワンクリック背景除去',
     subtitle: '画像背景を一瞬で削除',
-    browseFiles: 'ファイルを選択',
     dragDrop: 'ここに画像をドラッグ＆ドロップ',
+    browseFiles: 'ファイルを選択',
     or: 'または',
     supportedFormats: 'PNG',
     maxSize: '最大 10MB',
@@ -141,6 +177,18 @@ export const translations: Translations = {
     footer: 'Powered by Remove.bg · Built with Next.js + Cloudflare',
     processingFailed: '処理に失敗しました',
     preview: '元画像',
+    welcome: 'ようこそ',
+    yourCredits: 'あなたのクレジット',
+    creditsDesc: 'クレジットは画像処理に使用されます',
+    noCredits: 'クレジットがなくなりました。購入してください。',
+    purchaseCredits: 'クレジット購入',
+    purchase: '購入',
+    transactionHistory: '取引履歴',
+    noTransactions: '取引履歴なし',
+    signInRequired: 'ログインが必要です',
+    signInDesc: 'ログインしてサービスを使用してください。新規ユーザーは3つの無料クレジットを獲得！',
+    cancel: 'キャンセル',
+    signInGoogle: 'Googleでログイン',
   },
   ko: {
     title: '원클릭 배경 제거',
@@ -163,6 +211,18 @@ export const translations: Translations = {
     footer: 'Powered by Remove.bg · Built with Next.js + Cloudflare',
     processingFailed: '처리 실패',
     preview: '원본',
+    welcome: '환영합니다',
+    yourCredits: '당신의 크레딧',
+    creditsDesc: '크레딧은 이미지 처리에 사용됩니다',
+    noCredits: '크레딧이 없습니다. 더 구매하세요.',
+    purchaseCredits: '크레딧 구매',
+    purchase: '구매',
+    transactionHistory: '거래 내역',
+    noTransactions: '거래 내역 없음',
+    signInRequired: '로그인이 필요합니다',
+    signInDesc: '로그인하여 서비스를 사용하세요. 새 사용자는 3개의 무료 크레딧을 얻습니다!',
+    cancel: '취소',
+    signInGoogle: 'Google로 로그인',
   },
   fr: {
     title: 'Suppression BG',
@@ -185,15 +245,27 @@ export const translations: Translations = {
     footer: 'Propulsé par Remove.bg · Créé avec Next.js + Cloudflare',
     processingFailed: 'Échec du traitement',
     preview: 'Original',
+    welcome: 'Bienvenue',
+    yourCredits: 'Vos crédits',
+    creditsDesc: 'Les crédits sont utilisés pour le traitement des images',
+    noCredits: "Vous n'avez plus de crédits. Veuillez en acheter d'autres.",
+    purchaseCredits: 'Acheter des crédits',
+    purchase: 'Acheter',
+    transactionHistory: 'Historique des transactions',
+    noTransactions: 'Aucune transaction',
+    signInRequired: 'Connexion requise',
+    signInDesc: 'Veuillez vous connecter pour utiliser le service. Les nouveaux utilisateurs reçoivent 3 crédits gratuits !',
+    cancel: 'Annuler',
+    signInGoogle: 'Se connecter avec Google',
   },
   hi: {
-    title: 'बीजी रिमूवर',
-    subtitle: 'छवि पृष्ठभूमि हटाएं',
-    dragDrop: 'अपनी छवि यहां खींचें और छोड़ें',
+    title: 'BG Remover',
+    subtitle: 'Image Background हटाएं',
+    dragDrop: 'अपनी छवि यहां खींचें',
     browseFiles: 'फ़ाइलें ब्राउज़ करें',
     or: 'या',
     supportedFormats: 'PNG',
-    maxSize: 'अधिकतम 10MB',
+    maxSize: '10MB तक',
     processing: 'प्रसंस्करण...',
     uploading: 'अपलोड हो रहा है...',
     success: 'सफल!',
@@ -207,6 +279,18 @@ export const translations: Translations = {
     footer: 'Powered by Remove.bg · Built with Next.js + Cloudflare',
     processingFailed: 'प्रसंस्करण विफल',
     preview: 'मूल',
+    welcome: 'स्वागत है',
+    yourCredits: 'आपके क्रेडिट',
+    creditsDesc: 'क्रेडिट का उपयोग छवि प्रसंस्करण के लिए किया जाता है',
+    noCredits: 'आपके पास कोई क्रेडिट नहीं है। कृपया और खरीदें।',
+    purchaseCredits: 'क्रेडिट खरीदें',
+    purchase: 'खरीदें',
+    transactionHistory: 'लेन-देन इतिहास',
+    noTransactions: 'अभी तक कोई लेन-देन नहीं',
+    signInRequired: 'साइन इन आवश्यक',
+    signInDesc: 'सेवा का उपयोग करने के लिए कृपया साइन इन करें। नए उपयोगकर्ताओं को 3 मुफ्त क्रेडिट मिलते हैं!',
+    cancel: 'रद्द करें',
+    signInGoogle: 'Google से साइन इन करें',
   },
   ru: {
     title: 'Удаление Фона',
@@ -229,12 +313,24 @@ export const translations: Translations = {
     footer: 'При поддержке Remove.bg · Создано с Next.js + Cloudflare',
     processingFailed: 'Ошибка обработки',
     preview: 'Оригинал',
+    welcome: 'Добро пожаловать',
+    yourCredits: 'Ваши кредиты',
+    creditsDesc: 'Кредиты используются для обработки изображений',
+    noCredits: 'У вас закончились кредиты. Пожалуйста, купите больше.',
+    purchaseCredits: 'Купить кредиты',
+    purchase: 'Купить',
+    transactionHistory: 'История транзакций',
+    noTransactions: 'Пока нет транзакций',
+    signInRequired: 'Требуется вход',
+    signInDesc: 'Пожалуйста, войдите в систему для использования сервиса. Новые пользователи получают 3 бесплатных кредита!',
+    cancel: 'Отмена',
+    signInGoogle: 'Войти через Google',
   },
   fa: {
     title: 'حذف پس‌زمینه',
-    subtitle: 'حذف پس‌زمینه تصویر',
-    dragDrop: 'تصویر خود را اینجا بکشید و رها کنید',
-    browseFiles: 'مرور فایل‌ها',
+    subtitle: 'پس‌زمینه تصویر را حذف کنید',
+    dragDrop: 'تصویر خود را اینجا بکشید',
+    browseFiles: 'فایل‌ها را مرور کنید',
     or: 'یا',
     supportedFormats: 'PNG',
     maxSize: 'حداکثر 10 مگابایت',
@@ -251,6 +347,18 @@ export const translations: Translations = {
     footer: 'قدرت گرفته از Remove.bg · ساخته شده با Next.js + Cloudflare',
     processingFailed: 'پردازش ناموفق',
     preview: 'اصلی',
+    welcome: 'خوش آمدید',
+    yourCredits: 'اعتبار شما',
+    creditsDesc: 'اعتبار برای پردازش تصویر استفاده می‌شود',
+    noCredits: 'اعتبار شما تمام شده است. لطفاً بیشتر خریداری کنید.',
+    purchaseCredits: 'خرید اعتبار',
+    purchase: 'خرید',
+    transactionHistory: 'تاریخچه تراکنش‌ها',
+    noTransactions: 'هنوز تراکنشی نیست',
+    signInRequired: 'ورود نیاز است',
+    signInDesc: 'لطفاً وارد شوید تا از سرویس استفاده کنید. کاربران جدید 3 اعتبار رایگان دریافت می‌کنند!',
+    cancel: 'انصراف',
+    signInGoogle: 'ورود با Google',
   },
   es: {
     title: 'Eliminar Fondo',
@@ -273,6 +381,17 @@ export const translations: Translations = {
     footer: 'Desarrollado con Remove.bg · Creado con Next.js + Cloudflare',
     processingFailed: 'Error en el procesamiento',
     preview: 'Original',
+    welcome: 'Bienvenido',
+    yourCredits: 'Tus créditos',
+    creditsDesc: 'Los créditos se utilizan para el procesamiento de imágenes',
+    noCredits: 'No te quedan créditos. Por favor, compra más.',
+    purchaseCredits: 'Comprar créditos',
+    purchase: 'Comprar',
+    transactionHistory: 'Historial de transacciones',
+    noTransactions: 'Aún no hay transacciones',
+    signInRequired: 'Inicio de sesión requerido',
+    signInDesc: 'Por favor, inicia sesión para usar el servicio. ¡Los nuevos usuarios reciben 3 créditos gratis!',
+    cancel: 'Cancelar',
+    signInGoogle: 'Iniciar sesión con Google',
   },
 };
-
