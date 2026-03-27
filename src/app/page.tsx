@@ -131,7 +131,13 @@ export default function Home() {
                 Credits: <span className="text-cyber-accent font-bold">{credits}</span>
               </div>
             )}
-            <UserButton />
+            <a
+                href="/pricing"
+                className="px-4 py-2 text-sm text-cyber-muted hover:text-cyber-accent transition-colors"
+              >
+                Pricing
+              </a>
+              <UserButton />
           </div>
         </div>
       </header>
