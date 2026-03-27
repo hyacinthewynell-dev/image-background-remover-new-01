@@ -39,10 +39,19 @@ const plans = [
   },
 ];
 
+interface SelectedPlan {
+  name: string;
+  display_name: string;
+  credits: number;
+  price_usd: number;
+}
+
 export default function PricingPage() {
   const { data: session } = useSession();
   const router = useRouter();
   const [lang, setLang] = useState<Language>("en");
+  const [showModal, setShowModal] = useState(false);
+  const [selectedPlan, setSelectedPlan] = useState<SelectedPlan | null>(null);
   const t = translations[lang];
 
   useEffect(() => {
@@ -57,6 +66,22 @@ export default function PricingPage() {
   }, [lang]);
 
   const getText = (zh: string, en: string) => lang === 'zh-CN' ? zh : en;
+
+  const handlePurchase = (plan: typeof plans[0]) => {
+    if (!session) {
+      signIn("google");
+      return;
+    }
+    setSelectedPlan(plan);
+    setShowModal(true);
+  };
+
+  const confirmPurchase = () => {
+    if (selectedPlan) {
+      router.push(`/dashboard?plan=${selectedPlan.name}`);
+      setShowModal(false);
+    }
+  };
 
   return (
     <div className="min-h-screen bg-cyber-bg text-cyber-text">
@@ -161,25 +186,56 @@ export default function PricingPage() {
                   <span>{getText('优先处理', 'Priority processing')}</span>
                 </li>
               </ul>
-              {session ? (
-                <button
-                  onClick={() => router.push(`/dashboard?plan=${plan.name}`)}
-                  className="w-full py-3 bg-cyber-accent hover:bg-cyber-accent/80 text-white rounded-lg font-medium transition-colors"
-                >
-                  {t.purchase}
-                </button>
-              ) : (
-                <button
-                  onClick={() => signIn("google")}
-                  className="w-full py-3 bg-cyber-accent hover:bg-cyber-accent/80 text-white rounded-lg font-medium transition-colors"
-                >
-                  {t.signInGoogle}
-                </button>
-              )}
+              <button
+                onClick={() => handlePurchase(plan)}
+                className="w-full py-3 bg-cyber-accent hover:bg-cyber-accent/80 text-white rounded-lg font-medium transition-colors"
+              >
+                {getText('购买', 'Purchase')}
+              </button>
             </div>
           ))}
         </div>
       </div>
+
+      {/* Purchase Modal */}
+      {showModal && selectedPlan && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+          <div className="bg-cyber-panel rounded-xl p-8 max-w-md w-full">
+            <h3 className="text-2xl font-bold mb-4">{getText('确认购买', 'Confirm Purchase')}</h3>
+            <div className="cyber-panel p-4 mb-6">
+              <div className="flex justify-between mb-2">
+                <span className="text-cyber-muted">{getText('套餐', 'Plan')}</span>
+                <span className="font-bold">{selectedPlan.display_name}</span>
+              </div>
+              <div className="flex justify-between mb-2">
+                <span className="text-cyber-muted">{getText('积分数量', 'Credits')}</span>
+                <span className="font-bold">{selectedPlan.credits}</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-cyber-muted">{getText('价格', 'Price')}</span>
+                <span className="text-2xl font-bold text-cyber-accent">${selectedPlan.price_usd}</span>
+              </div>
+            </div>
+            <p className="text-cyber-muted text-sm mb-6">
+              {getText('点击确认后将跳转到支付页面', 'Click confirm to proceed to payment')}
+            </p>
+            <div className="flex gap-4">
+              <button
+                onClick={() => setShowModal(false)}
+                className="flex-1 py-3 border border-cyber-border rounded-lg hover:bg-cyber-border/50 transition-colors"
+              >
+                {getText('取消', 'Cancel')}
+              </button>
+              <button
+                onClick={confirmPurchase}
+                className="flex-1 py-3 bg-cyber-accent hover:bg-cyber-accent/80 text-white rounded-lg font-medium transition-colors"
+              >
+                {getText('确认', 'Confirm')}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* FAQ */}
       <div className="max-w-2xl mx-auto px-4 pb-16">
