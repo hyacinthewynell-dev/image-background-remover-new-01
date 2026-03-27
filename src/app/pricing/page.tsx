@@ -6,21 +6,43 @@ import { useRouter } from "next/navigation";
 import { Language, translations } from "@/lib/translations";
 import LanguageSelector from "@/components/LanguageSelector";
 import UserButton from "@/components/UserButton";
-import { getPlans } from "@/lib/supabase";
 
 const STORAGE_KEY = 'bg-remover-lang';
 
-const defaultPlans = [
-  { id: 1, name: 'starter', display_name: 'Starter', credits: 50, price_usd: 0.99, is_subscription: false },
-  { id: 2, name: 'pro', display_name: 'Pro', credits: 300, price_usd: 4.99, is_subscription: false },
-  { id: 3, name: 'power', display_name: 'Power', credits: 700, price_usd: 9.99, is_subscription: false },
+const plans = [
+  {
+    name: 'starter',
+    display_name: 'Starter',
+    credits: 50,
+    price_usd: 0.99,
+    price_per_credit: '$0.02/积分',
+    description: '最低充值选项，适合轻度用户',
+    popular: false,
+  },
+  {
+    name: 'pro',
+    display_name: 'Pro',
+    credits: 300,
+    price_usd: 4.99,
+    price_per_credit: '$0.017/积分',
+    description: '适合专业用户，最划算',
+    popular: true,
+  },
+  {
+    name: 'power',
+    display_name: 'Power',
+    credits: 700,
+    price_usd: 9.99,
+    price_per_credit: '$0.014/积分',
+    description: '大宗采购，适合高频用户',
+    popular: false,
+  },
 ];
 
 export default function PricingPage() {
   const { data: session } = useSession();
   const router = useRouter();
   const [lang, setLang] = useState<Language>("en");
-  const [plans, setPlans] = useState<any[]>(defaultPlans);
   const t = translations[lang];
 
   useEffect(() => {
@@ -28,25 +50,13 @@ export default function PricingPage() {
     if (savedLang && translations[savedLang]) {
       setLang(savedLang);
     }
-    fetchPlans();
   }, []);
 
   useEffect(() => {
     localStorage.setItem(STORAGE_KEY, lang);
   }, [lang]);
 
-  async function fetchPlans() {
-    try {
-      const data = await getPlans();
-      if (data && data.length > 0) {
-        setPlans(data);
-      }
-    } catch (e) {
-      console.error("Failed to fetch plans:", e);
-    }
-  }
-
-  const oneTimePlans = plans.filter(p => !p.is_subscription);
+  const getText = (zh: string, en: string) => lang === 'zh-CN' ? zh : en;
 
   return (
     <div className="min-h-screen bg-cyber-bg text-cyber-text">
@@ -80,51 +90,75 @@ export default function PricingPage() {
         </div>
       </header>
 
-      {/* Pricing Content */}
-      <div className="max-w-6xl mx-auto px-4 py-16">
-        {/* Hero */}
-        <div className="text-center mb-16">
-          <h2 className="text-4xl font-bold mb-4">{t.purchaseCredits}</h2>
-          <p className="text-cyber-muted text-lg max-w-2xl mx-auto">
-            {lang === 'zh-CN' 
-              ? '选择适合您的积分套餐，每次图片处理消耗1个积分'
-              : 'Choose a credit plan that works for you. Each image processing uses 1 credit'}
-          </p>
-        </div>
+      {/* Hero */}
+      <div className="text-center py-16 px-4">
+        <h2 className="text-4xl font-bold mb-4">{t.purchaseCredits}</h2>
+        <p className="text-cyber-muted text-lg">
+          {getText('每次图片处理消耗1个积分', 'Each image processing uses 1 credit')}
+        </p>
+      </div>
 
-        {/* One-time Plans */}
+      {/* Free Account Card */}
+      <div className="max-w-4xl mx-auto px-4 mb-8">
+        <div className="cyber-panel p-8 border-2 border-green-500/50">
+          <div className="flex items-center justify-between">
+            <div>
+              <h3 className="text-2xl font-bold mb-2">{getText('注册账户', 'Sign Up')}</h3>
+              <p className="text-cyber-muted">{getText('刚刚为新用户注册账户赠送3积分', 'Get 3 credits free when you sign up')}</p>
+            </div>
+            <div className="text-center">
+              <div className="text-4xl font-bold text-green-400">3</div>
+              <div className="text-cyber-muted">{getText('积分', 'Credits')}</div>
+              <div className="text-green-400 font-bold">{getText('免费', 'FREE')}</div>
+            </div>
+          </div>
+          {!session && (
+            <button
+              onClick={() => signIn("google")}
+              className="mt-6 w-full py-3 bg-green-500 hover:bg-green-600 text-white rounded-lg font-medium transition-colors"
+            >
+              {getText('立即注册', 'Sign Up Now')}
+            </button>
+          )}
+        </div>
+      </div>
+
+      {/* Paid Plans */}
+      <div className="max-w-6xl mx-auto px-4 pb-16">
         <h3 className="text-2xl font-bold mb-8 text-center">
-          {lang === 'zh-CN' ? '一次性购买' : 'One-time Purchase'}
+          {getText('购买积分包', 'Purchase Credits')}
         </h3>
-        <div className="grid md:grid-cols-3 gap-8 mb-16">
-          {oneTimePlans.map((plan) => (
-            <div key={plan.id || plan.name} className="cyber-panel p-8 relative">
-              {plan.name === 'pro' && (
-                <div className="absolute -top-4 left-1/2 -translate-x-1/2 px-4 py-1 bg-cyber-accent text-white text-sm rounded-full">
-                  {lang === 'zh-CN' ? '最受欢迎' : 'Most Popular'}
+        <div className="grid md:grid-cols-3 gap-8">
+          {plans.map((plan) => (
+            <div key={plan.name} className={`cyber-panel p-8 relative ${plan.popular ? 'border-2 border-cyber-accent' : ''}`}>
+              {plan.popular && (
+                <div className="absolute -top-4 left-1/2 -translate-x-1/2 px-4 py-1 bg-cyber-accent text-white text-sm rounded-full font-medium">
+                  {getText('最受欢迎', 'Most Popular')}
                 </div>
               )}
               <div className="text-center mb-6">
-                <h4 className="text-2xl font-bold mb-2">{plan.display_name}</h4>
+                <h4 className="text-xl font-bold mb-2">{plan.display_name}</h4>
                 <div className="text-4xl font-bold text-cyber-accent">${plan.price_usd}</div>
-                <p className="text-cyber-muted mt-2">{plan.credits} credits</p>
+                <div className="text-cyber-muted mt-1">{plan.credits} {getText('积分', 'Credits')}</div>
+                <div className="text-sm text-cyber-muted mt-1">{plan.price_per_credit}</div>
               </div>
+              <p className="text-center text-cyber-muted mb-6">{plan.description}</p>
               <ul className="space-y-3 mb-8">
                 <li className="flex items-center gap-2">
                   <span className="text-green-400">✓</span>
-                  <span>{lang === 'zh-CN' ? '永久有效' : 'Lifetime access'}</span>
+                  <span>{getText('永久有效', 'Lifetime access')}</span>
                 </li>
                 <li className="flex items-center gap-2">
                   <span className="text-green-400">✓</span>
-                  <span>{lang === 'zh-CN' ? '高清输出' : 'High quality output'}</span>
+                  <span>{getText('高清输出', 'High quality output')}</span>
                 </li>
                 <li className="flex items-center gap-2">
                   <span className="text-green-400">✓</span>
-                  <span>{lang === 'zh-CN' ? '无水印' : 'No watermark'}</span>
+                  <span>{getText('无水印', 'No watermark')}</span>
                 </li>
                 <li className="flex items-center gap-2">
                   <span className="text-green-400">✓</span>
-                  <span>{lang === 'zh-CN' ? '优先处理' : 'Priority processing'}</span>
+                  <span>{getText('优先处理', 'Priority processing')}</span>
                 </li>
               </ul>
               {session ? (
@@ -145,59 +179,33 @@ export default function PricingPage() {
             </div>
           ))}
         </div>
+      </div>
 
-        {/* FAQ */}
-        <div className="max-w-2xl mx-auto">
-          <h3 className="text-2xl font-bold mb-8 text-center">
-            {lang === 'zh-CN' ? '常见问题' : 'FAQ'}
-          </h3>
-          <div className="space-y-4">
-            <div className="cyber-panel p-6">
-              <h4 className="font-bold mb-2">
-                {lang === 'zh-CN' ? '积分会过期吗？' : 'Do credits expire?'}
-              </h4>
-              <p className="text-cyber-muted">
-                {lang === 'zh-CN' 
-                  ? '一次性购买的积分永久有效，没有过期时间。'
-                  : 'One-time purchased credits are valid forever with no expiration.'}
-              </p>
-            </div>
-            <div className="cyber-panel p-6">
-              <h4 className="font-bold mb-2">
-                {lang === 'zh-CN' ? '如何购买？' : 'How to purchase?'}
-              </h4>
-              <p className="text-cyber-muted">
-                {lang === 'zh-CN'
-                  ? '登录后选择套餐，使用信用卡或 PayPal 支付。支付完成后积分立即到账。'
-                  : 'Sign in, choose a plan, and pay with credit card or PayPal. Credits are credited instantly.'}
-              </p>
-            </div>
-            <div className="cyber-panel p-6">
-              <h4 className="font-bold mb-2">
-                {lang === 'zh-CN' ? '支持哪些支付方式？' : 'What payment methods are supported?'}
-              </h4>
-              <p className="text-cyber-muted">
-                {lang === 'zh-CN'
-                  ? '目前支持信用卡支付，PayPal 支付即将推出。'
-                  : 'We currently support credit card payments. PayPal coming soon.'}
-              </p>
-            </div>
-            <div className="cyber-panel p-6">
-              <h4 className="font-bold mb-2">
-                {lang === 'zh-CN' ? '可以退款吗？' : 'Can I get a refund?'}
-              </h4>
-              <p className="text-cyber-muted">
-                {lang === 'zh-CN'
-                  ? '未使用的积分可在7天内申请退款。'
-                  : 'Unused credits can be refunded within 7 days.'}
-              </p>
-            </div>
+      {/* FAQ */}
+      <div className="max-w-2xl mx-auto px-4 pb-16">
+        <h3 className="text-2xl font-bold mb-8 text-center">FAQ</h3>
+        <div className="space-y-4">
+          <div className="cyber-panel p-6">
+            <h4 className="font-bold mb-2">{getText('积分会过期吗？', 'Do credits expire?')}</h4>
+            <p className="text-cyber-muted">{getText('一次性购买的积分永久有效，没有过期时间。', 'One-time purchased credits are valid forever with no expiration.')}</p>
+          </div>
+          <div className="cyber-panel p-6">
+            <h4 className="font-bold mb-2">{getText('如何购买？', 'How to purchase?')}</h4>
+            <p className="text-cyber-muted">{getText('登录后选择套餐，使用信用卡或 PayPal 支付。支付完成后积分立即到账。', 'Sign in, choose a plan, and pay with credit card or PayPal. Credits are credited instantly.')}</p>
+          </div>
+          <div className="cyber-panel p-6">
+            <h4 className="font-bold mb-2">{getText('支持哪些支付方式？', 'What payment methods are supported?')}</h4>
+            <p className="text-cyber-muted">{getText('目前支持信用卡支付，PayPal 支付即将推出。', 'We currently support credit card payments. PayPal coming soon.')}</p>
+          </div>
+          <div className="cyber-panel p-6">
+            <h4 className="font-bold mb-2">{getText('可以退款吗？', 'Can I get a refund?')}</h4>
+            <p className="text-cyber-muted">{getText('未使用的积分可在7天内申请退款。', 'Unused credits can be refunded within 7 days.')}</p>
           </div>
         </div>
       </div>
 
       {/* Footer */}
-      <footer className="border-t border-cyber-border py-8 px-6 mt-16">
+      <footer className="border-t border-cyber-border py-8 px-6">
         <div className="max-w-6xl mx-auto text-center text-cyber-muted text-sm">
           {t.footer}
         </div>
