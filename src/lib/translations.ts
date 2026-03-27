@@ -14,6 +14,18 @@ export const languages: { code: Language; name: string; nativeName: string }[] =
 ];
 
 type TranslationKey = 
+  | 'welcome'
+  | 'yourCredits'
+  | 'creditsDesc'
+  | 'noCredits'
+  | 'purchaseCredits'
+  | 'purchase'
+  | 'transactionHistory'
+  | 'noTransactions'
+  | 'signInRequired'
+  | 'signInDesc'
+  | 'cancel'
+  | 'signInGoogle' 
   | 'title'
   | 'subtitle'
   | 'dragDrop'
@@ -263,3 +275,4 @@ export const translations: Translations = {
     preview: 'Original',
   },
 };
+
