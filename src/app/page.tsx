@@ -174,10 +174,11 @@ export default function Home() {
 
               {resultImage && (
                 <ResultPreview
-                  originalImage={originalImage}
-                  resultImage={resultImage}
+                  original={originalImage}
+                  result={resultImage}
                   fileName={fileName}
                   onReset={handleReset}
+                  t={t}
                 />
               )}
             </>
