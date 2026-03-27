@@ -23,7 +23,7 @@ export default function Home() {
   const [fileName, setFileName] = useState<string>("");
   const [lang, setLang] = useState<Language>("en");
   const [credits, setCredits] = useState<number | null>(null);
-  const [showUpgrade, setShowUpgrade] = useState(false);
+  const [showLoginPrompt, setShowLoginPrompt] = useState(false);
 
   const t = translations[lang];
 
@@ -40,13 +40,15 @@ export default function Home() {
   }
 
   const handleFileSelect = useCallback(async (file: File) => {
+    // If not logged in, prompt login
     if (!session) {
-      signIn("google");
+      setShowLoginPrompt(true);
       return;
     }
 
+    // If no credits, prompt upgrade
     if (credits !== null && credits <= 0) {
-      setShowUpgrade(true);
+      router.push("/dashboard");
       return;
     }
 
@@ -77,6 +79,7 @@ export default function Home() {
         throw new Error(data.error || "Processing failed");
       }
 
+      // Deduct credit after successful processing
       if (session?.user?.id) {
         await deductCredit(session.user.id);
       }
@@ -89,7 +92,7 @@ export default function Home() {
       setErrorMessage(message);
       setStatus("error");
     }
-  }, [session, credits]);
+  }, [session, credits, router]);
 
   const handleReset = useCallback(() => {
     setStatus("idle");
@@ -101,6 +104,7 @@ export default function Home() {
 
   return (
     <main className="min-h-screen flex flex-col">
+      {/* Header */}
       <header className="border-b border-cyber-border py-4 px-6">
         <div className="max-w-5xl mx-auto flex items-center justify-between">
           <div className="flex items-center gap-3">
@@ -121,93 +125,69 @@ export default function Home() {
         </div>
       </header>
 
+      {/* Main Content */}
       <div className="flex-1 flex flex-col items-center justify-center px-4 py-12">
         <div className="w-full max-w-3xl">
-          {!session ? (
-            <div className="text-center">
-              <h2 className="text-2xl font-bold mb-4">Sign in to use BG Remover</h2>
-              <p className="text-cyber-muted mb-6">Create an account to get 3 free credits</p>
+          <div className="text-center mb-8">
+            <h2 className="text-3xl font-bold mb-3">{t.title}</h2>
+            <p className="text-cyber-muted">{t.subtitle}</p>
+          </div>
+
+          {(status === "uploading" || status === "processing") && (
+            <StatusMessage status={status} fileName={fileName} t={t} />
+          )}
+
+          {status === "idle" && (
+            <UploadZone onFileSelect={handleFileSelect} t={t} />
+          )}
+
+          {status === "error" && errorMessage && (
+            <div className="text-center py-8">
+              <p className="text-red-400 mb-4">{errorMessage}</p>
+              <button
+                onClick={handleReset}
+                className="px-6 py-3 bg-cyber-accent hover:bg-cyber-accent/80 text-white rounded-lg font-medium transition-colors"
+              >
+                {t.tryAgain}
+              </button>
+            </div>
+          )}
+
+          {resultImage && (
+            <ResultPreview
+              original={originalImage}
+              result={resultImage}
+              fileName={fileName}
+              onReset={handleReset}
+              t={t}
+            />
+          )}
+        </div>
+      </div>
+
+      {/* Login Prompt Modal */}
+      {showLoginPrompt && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+          <div className="bg-cyber-panel p-8 rounded-lg max-w-md mx-4">
+            <h3 className="text-xl font-bold mb-4">Sign in Required</h3>
+            <p className="text-cyber-muted mb-6">Please sign in to process images. New users get 3 free credits!</p>
+            <div className="flex gap-4">
+              <button
+                onClick={() => setShowLoginPrompt(false)}
+                className="flex-1 px-4 py-2 border border-cyber-border rounded-lg hover:bg-cyber-border/50 transition-colors"
+              >
+                Cancel
+              </button>
               <button
                 onClick={() => signIn("google")}
-                className="px-6 py-3 bg-cyber-accent hover:bg-cyber-accent/80 text-white rounded-lg font-medium transition-colors"
+                className="flex-1 px-4 py-2 bg-cyber-accent hover:bg-cyber-accent/80 text-white rounded-lg font-medium transition-colors"
               >
                 Sign in with Google
               </button>
             </div>
-          ) : credits === 0 ? (
-            <div className="text-center">
-              <h2 className="text-2xl font-bold mb-4">No Credits Remaining</h2>
-              <p className="text-cyber-muted mb-6">You have used all your credits. Please purchase more to continue.</p>
-              <button
-                onClick={() => router.push("/dashboard")}
-                className="px-6 py-3 bg-cyber-accent hover:bg-cyber-accent/80 text-white rounded-lg font-medium transition-colors"
-              >
-                Purchase Credits
-              </button>
-            </div>
-          ) : (
-            <>
-              <div className="text-center mb-8">
-                <h2 className="text-3xl font-bold mb-3">{t.title}</h2>
-                <p className="text-cyber-muted">{t.subtitle}</p>
-              </div>
-
-              {(status === "uploading" || status === "processing") && (
-                <StatusMessage status={status} fileName={fileName} t={t} />
-              )}
-
-              {status === "idle" && (
-                <UploadZone onFileSelect={handleFileSelect} t={t} />
-              )}
-
-              {status === "error" && errorMessage && (
-                <div className="text-center py-8">
-                  <p className="text-red-400 mb-4">{errorMessage}</p>
-                  <button
-                    onClick={handleReset}
-                    className="px-6 py-3 bg-cyber-accent hover:bg-cyber-accent/80 text-white rounded-lg font-medium transition-colors"
-                  >
-                    Try Again
-                  </button>
-                </div>
-              )}
-
-              {resultImage && (
-                <ResultPreview
-                  original={originalImage}
-                  result={resultImage}
-                  fileName={fileName}
-                  onReset={handleReset}
-                  t={t}
-                />
-              )}
-            </>
-          )}
-
-          {showUpgrade && (
-            <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-              <div className="bg-cyber-panel p-8 rounded-lg max-w-md mx-4">
-                <h3 className="text-xl font-bold mb-4">No Credits Remaining</h3>
-                <p className="text-cyber-muted mb-6">You need credits to process images. Please purchase more.</p>
-                <div className="flex gap-4">
-                  <button
-                    onClick={() => setShowUpgrade(false)}
-                    className="flex-1 px-4 py-2 border border-cyber-border rounded-lg hover:bg-cyber-border/50 transition-colors"
-                  >
-                    Cancel
-                  </button>
-                  <button
-                    onClick={() => router.push("/dashboard")}
-                    className="flex-1 px-4 py-2 bg-cyber-accent hover:bg-cyber-accent/80 text-white rounded-lg font-medium transition-colors"
-                  >
-                    Purchase
-                  </button>
-                </div>
-              </div>
-            </div>
-          )}
+          </div>
         </div>
-      </div>
+      )}
     </main>
   );
 }
