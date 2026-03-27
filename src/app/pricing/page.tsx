@@ -8,7 +8,7 @@ import LanguageSelector from "@/components/LanguageSelector";
 
 const STORAGE_KEY = 'bg-remover-lang';
 
-const plans = [
+const oneTimePlans = [
   {
     name: 'starter',
     display_name: 'Starter',
@@ -41,12 +41,41 @@ const plans = [
   },
 ];
 
+const subscriptionPlans = [
+  {
+    name: 'basic_monthly',
+    display_name: 'Basic',
+    display_name_zh: '基础版',
+    credits: 25,
+    price_usd: 9.99,
+    period: '/月',
+    price_per_credit: '$0.40/次',
+    description: '高清图片，支持 JPG/PNG/WebP',
+    popular: false,
+    is_subscription: true,
+  },
+  {
+    name: 'premium_monthly',
+    display_name: 'Premium',
+    display_name_zh: '高级版',
+    credits: 60,
+    price_usd: 19.99,
+    period: '/月',
+    price_per_credit: '$0.33/次',
+    description: '高清图片，支持 JPG/PNG/WebP',
+    popular: true,
+    is_subscription: true,
+  },
+];
+
 interface SelectedPlan {
   name: string;
   display_name: string;
   display_name_zh: string;
   credits: number;
   price_usd: number;
+  period?: string;
+  is_subscription: boolean;
 }
 
 export default function PricingPage() {
@@ -70,18 +99,12 @@ export default function PricingPage() {
 
   const getText = (zh: string, en: string) => lang === 'zh-CN' ? zh : en;
 
-  const handlePurchase = (plan: typeof plans[0]) => {
+  const handlePurchase = (plan: any) => {
     if (!session) {
       signIn("google");
       return;
     }
-    setSelectedPlan({
-      name: plan.name,
-      display_name: plan.display_name,
-      display_name_zh: plan.display_name_zh,
-      credits: plan.credits,
-      price_usd: plan.price_usd,
-    });
+    setSelectedPlan(plan);
     setShowModal(true);
   };
 
@@ -157,13 +180,77 @@ export default function PricingPage() {
         </div>
       </div>
 
-      {/* Paid Plans */}
+      {/* Monthly Subscription Section */}
+      <div className="max-w-6xl mx-auto px-4 pb-8">
+        <h3 className="text-2xl font-bold mb-2 text-center">
+          {getText('月订阅（自动续费）', 'Monthly Subscription (Auto-Renew)')}
+        </h3>
+        <p className="text-cyber-muted text-center mb-8">
+          {getText('每月自动续费，随时取消', 'Auto-renews monthly, cancel anytime')}
+        </p>
+        <div className="grid md:grid-cols-2 gap-8 max-w-3xl mx-auto">
+          {subscriptionPlans.map((plan) => (
+            <div key={plan.name} className={`cyber-panel p-8 relative ${plan.popular ? 'border-2 border-cyber-accent' : ''}`}>
+              {plan.popular && (
+                <div className="absolute -top-4 left-1/2 -translate-x-1/2 px-4 py-1 bg-cyber-accent text-white text-sm rounded-full font-medium">
+                  {getText('最受欢迎', 'Most Popular')}
+                </div>
+              )}
+              <div className="text-center mb-4">
+                <h4 className="text-xl font-bold mb-2">{lang === 'zh-CN' ? plan.display_name_zh : plan.display_name}</h4>
+                <div className="flex items-baseline justify-center gap-1">
+                  <span className="text-4xl font-bold text-cyber-accent">${plan.price_usd}</span>
+                  <span className="text-cyber-muted">{plan.period}</span>
+                </div>
+                <div className="text-cyber-muted mt-1">{plan.credits} {getText('次/月', 'credits/month')}</div>
+                <div className="text-sm text-cyber-muted mt-1">{plan.price_per_credit}</div>
+              </div>
+              <p className="text-center text-sm text-cyber-muted mb-6">{plan.description}</p>
+              <ul className="space-y-3 mb-8">
+                <li className="flex items-center gap-2">
+                  <span className="text-green-400">✓</span>
+                  <span>{getText('每月自动续费', 'Auto-renews monthly')}</span>
+                </li>
+                <li className="flex items-center gap-2">
+                  <span className="text-green-400">✓</span>
+                  <span>{getText('随时取消', 'Cancel anytime')}</span>
+                </li>
+                <li className="flex items-center gap-2">
+                  <span className="text-green-400">✓</span>
+                  <span>{getText('高清输出', 'High quality output')}</span>
+                </li>
+                <li className="flex items-center gap-2">
+                  <span className="text-green-400">✓</span>
+                  <span>{getText('无水印', 'No watermark')}</span>
+                </li>
+              </ul>
+              <button
+                onClick={() => handlePurchase(plan)}
+                className="w-full py-3 bg-cyber-accent hover:bg-cyber-accent/80 text-white rounded-lg font-medium transition-colors"
+              >
+                {getText('订阅', 'Subscribe')}
+              </button>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Divider */}
+      <div className="max-w-4xl mx-auto px-4">
+        <div className="flex items-center gap-4 my-8">
+          <div className="flex-1 h-px bg-cyber-border"></div>
+          <span className="text-cyber-muted text-sm">{getText('或一次性购买', 'Or one-time purchase')}</span>
+          <div className="flex-1 h-px bg-cyber-border"></div>
+        </div>
+      </div>
+
+      {/* One-time Purchase */}
       <div className="max-w-6xl mx-auto px-4 pb-16">
         <h3 className="text-2xl font-bold mb-8 text-center">
-          {getText('购买积分包', 'Purchase Credits')}
+          {getText('一次性购买积分包', 'One-time Credit Package')}
         </h3>
         <div className="grid md:grid-cols-3 gap-8">
-          {plans.map((plan) => (
+          {oneTimePlans.map((plan) => (
             <div key={plan.name} className={`cyber-panel p-8 relative ${plan.popular ? 'border-2 border-cyber-accent' : ''}`}>
               {plan.popular && (
                 <div className="absolute -top-4 left-1/2 -translate-x-1/2 px-4 py-1 bg-cyber-accent text-white text-sm rounded-full font-medium">
@@ -210,7 +297,9 @@ export default function PricingPage() {
       {showModal && selectedPlan && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
           <div className="bg-cyber-panel rounded-xl p-8 max-w-md w-full">
-            <h3 className="text-2xl font-bold mb-4">{getText('确认购买', 'Confirm Purchase')}</h3>
+            <h3 className="text-2xl font-bold mb-4">
+              {selectedPlan.is_subscription ? getText('确认订阅', 'Confirm Subscription') : getText('确认购买', 'Confirm Purchase')}
+            </h3>
             <div className="cyber-panel p-4 mb-6">
               <div className="flex justify-between mb-2">
                 <span className="text-cyber-muted">{getText('套餐', 'Plan')}</span>
@@ -218,12 +307,19 @@ export default function PricingPage() {
               </div>
               <div className="flex justify-between mb-2">
                 <span className="text-cyber-muted">{getText('积分数量', 'Credits')}</span>
-                <span className="font-bold">{selectedPlan.credits}</span>
+                <span className="font-bold">{selectedPlan.credits} {selectedPlan.is_subscription ? '/月' : ''}</span>
               </div>
               <div className="flex justify-between">
                 <span className="text-cyber-muted">{getText('价格', 'Price')}</span>
-                <span className="text-2xl font-bold text-cyber-accent">${selectedPlan.price_usd}</span>
+                <span className="text-2xl font-bold text-cyber-accent">${selectedPlan.price_usd}{selectedPlan.period || ''}</span>
               </div>
+              {selectedPlan.is_subscription && (
+                <div className="mt-4 pt-4 border-t border-cyber-border">
+                  <p className="text-sm text-cyber-muted">
+                    {getText('每月自动续费，可随时取消', 'Auto-renews monthly, cancel anytime')}
+                  </p>
+                </div>
+              )}
             </div>
             <p className="text-cyber-muted text-sm mb-6">
               {getText('点击确认后将跳转到支付页面', 'Click confirm to proceed to payment')}
@@ -252,11 +348,11 @@ export default function PricingPage() {
         <div className="space-y-4">
           <div className="cyber-panel p-6">
             <h4 className="font-bold mb-2">{getText('积分会过期吗？', 'Do credits expire?')}</h4>
-            <p className="text-cyber-muted">{getText('一次性购买的积分永久有效，没有过期时间。', 'One-time purchased credits are valid forever with no expiration.')}</p>
+            <p className="text-cyber-muted">{getText('一次性购买的积分永久有效。月订阅的积分每月重置。', 'One-time purchased credits never expire. Monthly subscription credits reset each month.')}</p>
           </div>
           <div className="cyber-panel p-6">
-            <h4 className="font-bold mb-2">{getText('如何购买？', 'How to purchase?')}</h4>
-            <p className="text-cyber-muted">{getText('登录后选择套餐，使用信用卡或 PayPal 支付。支付完成后积分立即到账。', 'Sign in, choose a plan, and pay with credit card or PayPal. Credits are credited instantly.')}</p>
+            <h4 className="font-bold mb-2">{getText('如何取消订阅？', 'How to cancel subscription?')}</h4>
+            <p className="text-cyber-muted">{getText('可以随时在账户设置中取消订阅，取消后不再续费。', 'You can cancel anytime in account settings. After cancellation, no further charges will be made.')}</p>
           </div>
           <div className="cyber-panel p-6">
             <h4 className="font-bold mb-2">{getText('支持哪些支付方式？', 'What payment methods are supported?')}</h4>
