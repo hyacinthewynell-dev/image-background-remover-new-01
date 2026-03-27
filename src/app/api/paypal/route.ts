@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 
-const PAYPAL_API_BASE = "https://api-m.paypal.com";
+const PAYPAL_API_BASE = "https://api-m.sandbox.paypal.com";
 
 async function getAccessToken(clientId: string, clientSecret: string): Promise<string> {
   const auth = Buffer.from(`${clientId}:${clientSecret}`).toString("base64");
