@@ -97,7 +97,18 @@ export default function DashboardPage() {
               onClick={() => signOut()}
               className="px-4 py-2 text-sm border border-cyber-border rounded-lg hover:bg-cyber-border/50 transition-colors"
             >
-              Sign Out
+              <a
+                href="/pricing"
+                className="px-4 py-2 text-sm border border-cyber-border rounded-lg hover:bg-cyber-border/50 transition-colors"
+              >
+                Pricing
+              </a>
+              <button
+                onClick={() => signOut()}
+                className="px-4 py-2 text-sm border border-cyber-border rounded-lg hover:bg-cyber-border/50 transition-colors"
+              >
+                Sign Out
+              </button>
             </button>
           </div>
         </div>
