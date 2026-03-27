@@ -8,16 +8,18 @@ import LanguageSelector from "@/components/LanguageSelector";
 
 const STORAGE_KEY = 'bg-remover-lang';
 
-// 套餐描述翻译
+// 套餐描述翻译 - 只包含 translations.ts 中定义的语言
 const planDescriptions: Record<Language, string> = {
   'zh-CN': '高清图片，支持 JPG/PNG/WebP',
   'en': 'HD images, supports JPG/PNG/WebP',
+  'zh-TW': '高清圖片，支援 JPG/PNG/WebP',
   'ja': 'HD画像、JPG/PNG/WebP対応',
   'ko': 'HD 이미지, JPG/PNG/WebP 지원',
-  'es': 'Imágenes HD, soporta JPG/PNG/WebP',
   'fr': 'Images HD, supporte JPG/PNG/WebP',
-  'de': 'HD-Bilder, unterstützt JPG/PNG/WebP',
-  'zh-TW': '高清圖片，支援 JPG/PNG/WebP',
+  'hi': 'HD चित्र, JPG/PNG/WebP समर्थित',
+  'ru': 'HD изображения, поддержка JPG/PNG/WebP',
+  'fa': 'تصاویر HD، پشتیبانی از JPG/PNG/WebP',
+  'es': 'Imágenes HD, soporta JPG/PNG/WebP',
 };
 
 const oneTimePlans = [
@@ -60,7 +62,7 @@ export default function PricingPage() {
     localStorage.setItem(STORAGE_KEY, lang);
   }, [lang]);
 
-  const getText = (zh: string, en: string) => lang === 'zh-CN' ? zh : en;
+  const getText = (zh: string, en: string) => lang === 'zh-CN' || lang === 'zh-TW' ? zh : en;
   
   const getPlanDescription = () => {
     return planDescriptions[lang] || planDescriptions['en'];
