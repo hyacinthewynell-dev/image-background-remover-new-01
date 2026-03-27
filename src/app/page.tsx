@@ -153,7 +153,7 @@ export default function Home() {
                 <p className="text-cyber-muted">{t.subtitle}</p>
               </div>
 
-              <UploadZone onFileSelect={handleFileSelect} status={status} />
+              <UploadZone onFileSelect={handleFileSelect} t={translations[lang]} />
 
               {status === "error" && errorMessage && (
                 <StatusMessage type="error" message={errorMessage} onClose={handleReset} />
