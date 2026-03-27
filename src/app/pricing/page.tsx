@@ -8,7 +8,7 @@ import LanguageSelector from "@/components/LanguageSelector";
 
 const STORAGE_KEY = 'bg-remover-lang';
 
-// 套餐描述翻译 - 只包含 translations.ts 中定义的语言
+// 套餐描述翻译
 const planDescriptions: Record<Language, string> = {
   'zh-CN': '高清图片，支持 JPG/PNG/WebP',
   'en': 'HD images, supports JPG/PNG/WebP',
@@ -39,7 +39,6 @@ interface SelectedPlan {
   display_name_zh: string;
   credits: number;
   price_usd: number;
-  period?: string;
   is_subscription: boolean;
 }
 
@@ -76,7 +75,7 @@ export default function PricingPage() {
     return `$${perCredit}/credit`;
   };
 
-  const getPlanName = (plan: typeof oneTimePlans[0] | typeof subscriptionPlans[0]) => {
+  const getPlanName = (plan: { display_name: string; display_name_zh: string }) => {
     return lang === 'zh-CN' || lang === 'zh-TW' ? plan.display_name_zh : plan.display_name;
   };
 
@@ -86,7 +85,11 @@ export default function PricingPage() {
       return;
     }
     setSelectedPlan({
-      ...plan,
+      name: plan.name,
+      display_name: plan.display_name,
+      display_name_zh: plan.display_name_zh,
+      credits: plan.credits,
+      price_usd: plan.price_usd,
       is_subscription: isSubscription,
     });
     setShowModal(true);
