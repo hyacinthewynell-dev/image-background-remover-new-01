@@ -72,7 +72,7 @@ export default function PricingPage() {
     return isSubscription ? `$${perCredit}/次` : `$${perCredit}/积分`;
   };
 
-  const getPlanName = (plan: typeof oneTimePlans[0] | typeof subscriptionPlans[0]) => {
+  const getPlanName = (plan: { display_name: string; display_name_zh: string }) => {
     return lang === 'zh-CN' || lang === 'zh-TW' ? plan.display_name_zh : plan.display_name;
   };
 
@@ -100,7 +100,6 @@ export default function PricingPage() {
     setPaymentStatus('processing');
     
     try {
-      // Call API to verify payment and add credits
       const response = await fetch("/api/paypal/capture", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -150,7 +149,6 @@ export default function PricingPage() {
 
   return (
     <div className="min-h-screen bg-cyber-bg text-cyber-text">
-      {/* Header */}
       <header className="border-b border-cyber-border py-4 px-6">
         <div className="max-w-6xl mx-auto flex items-center justify-between">
           <div className="flex items-center gap-3">
@@ -174,13 +172,11 @@ export default function PricingPage() {
         </div>
       </header>
 
-      {/* Hero */}
       <div className="text-center py-16 px-4">
         <h2 className="text-4xl font-bold mb-4">{t.purchaseCredits}</h2>
         <p className="text-cyber-muted text-lg">{getText('每次图片处理消耗1个积分', 'Each image processing uses 1 credit')}</p>
       </div>
 
-      {/* Free Account Card */}
       <div className="max-w-4xl mx-auto px-4 mb-8">
         <div className="cyber-panel p-8 border-2 border-green-500/50">
           <div className="flex items-center justify-between">
@@ -202,7 +198,6 @@ export default function PricingPage() {
         </div>
       </div>
 
-      {/* Monthly Subscription */}
       <div className="max-w-6xl mx-auto px-4 pb-8">
         <h3 className="text-2xl font-bold mb-2 text-center">
           {getText('月订阅（自动续费）', 'Monthly Subscription (Auto-Renew)')}
@@ -234,7 +229,6 @@ export default function PricingPage() {
         </div>
       </div>
 
-      {/* Divider */}
       <div className="max-w-4xl mx-auto px-4">
         <div className="flex items-center gap-4 my-8">
           <div className="flex-1 h-px bg-cyber-border"></div>
@@ -243,7 +237,6 @@ export default function PricingPage() {
         </div>
       </div>
 
-      {/* One-time Purchase */}
       <div className="max-w-6xl mx-auto px-4 pb-16">
         <h3 className="text-2xl font-bold mb-8 text-center">{getText('一次性购买积分包', 'One-time Credit Package')}</h3>
         <div className="grid md:grid-cols-3 gap-8">
@@ -269,7 +262,6 @@ export default function PricingPage() {
         </div>
       </div>
 
-      {/* Payment Modal */}
       {showModal && selectedPlan && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
           <div className="bg-cyber-panel rounded-xl p-8 max-w-md w-full">
@@ -291,11 +283,11 @@ export default function PricingPage() {
                   </div>
                   <div className="flex justify-between mb-2">
                     <span className="text-cyber-muted">{getText('积分数量', 'Credits')}</span>
-                    <span className="font-bold">{selectedPlan.credits} {selectedPlan.is_subscription ? getText('/月', '/month') : ''}</span>
+                    <span className="font-bold">{selectedPlan.credits}</span>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-cyber-muted">{getText('价格', 'Price')}</span>
-                    <span className="text-2xl font-bold text-cyber-accent">${selectedPlan.price_usd}{selectedPlan.is_subscription ? getText('/月', '/month') : ''}</span>
+                    <span className="text-2xl font-bold text-cyber-accent">${selectedPlan.price_usd}</span>
                   </div>
                 </div>
 
@@ -327,7 +319,6 @@ export default function PricingPage() {
         </div>
       )}
 
-      {/* Footer */}
       <footer className="border-t border-cyber-border py-8 px-6 mt-16">
         <div className="max-w-6xl mx-auto text-center text-cyber-muted text-sm">{t.footer}</div>
       </footer>
