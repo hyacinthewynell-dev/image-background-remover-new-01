@@ -40,13 +40,11 @@ export default function Home() {
   }
 
   const handleFileSelect = useCallback(async (file: File) => {
-    // If not logged in, prompt login
     if (!session) {
       setShowLoginPrompt(true);
       return;
     }
 
-    // If no credits, prompt upgrade
     if (credits !== null && credits <= 0) {
       router.push("/dashboard");
       return;
@@ -79,7 +77,6 @@ export default function Home() {
         throw new Error(data.error || "Processing failed");
       }
 
-      // Deduct credit after successful processing
       if (session?.user?.id) {
         await deductCredit(session.user.id);
       }
@@ -104,7 +101,6 @@ export default function Home() {
 
   return (
     <main className="min-h-screen flex flex-col">
-      {/* Header */}
       <header className="border-b border-cyber-border py-4 px-6">
         <div className="max-w-5xl mx-auto flex items-center justify-between">
           <div className="flex items-center gap-3">
@@ -125,7 +121,6 @@ export default function Home() {
         </div>
       </header>
 
-      {/* Main Content */}
       <div className="flex-1 flex flex-col items-center justify-center px-4 py-12">
         <div className="w-full max-w-3xl">
           <div className="text-center mb-8">
@@ -165,7 +160,6 @@ export default function Home() {
         </div>
       </div>
 
-      {/* Login Prompt Modal */}
       {showLoginPrompt && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
           <div className="bg-cyber-panel p-8 rounded-lg max-w-md mx-4">
