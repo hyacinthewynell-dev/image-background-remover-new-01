@@ -8,64 +8,26 @@ import LanguageSelector from "@/components/LanguageSelector";
 
 const STORAGE_KEY = 'bg-remover-lang';
 
+// 套餐描述翻译
+const planDescriptions = {
+  'zh-CN': '高清图片，支持 JPG/PNG/WebP',
+  'en': 'HD images, supports JPG/PNG/WebP',
+  'ja': 'HD画像、JPG/PNG/WebP対応',
+  'ko': 'HD 이미지, JPG/PNG/WebP 지원',
+  'es': 'Imágenes HD, soporta JPG/PNG/WebP',
+  'fr': 'Images HD, supporte JPG/PNG/WebP',
+  'de': 'HD-Bilder, unterstützt JPG/PNG/WebP',
+};
+
 const oneTimePlans = [
-  {
-    name: 'starter',
-    display_name: 'Starter',
-    display_name_zh: '入门版',
-    credits: 10,
-    price_usd: 4.99,
-    price_per_credit: '$0.50/积分',
-    description: '高清图片，支持 JPG/PNG/WebP',
-    popular: false,
-  },
-  {
-    name: 'pro',
-    display_name: 'Pro',
-    display_name_zh: '专业版',
-    credits: 30,
-    price_usd: 12.99,
-    price_per_credit: '$0.43/积分',
-    description: '高清图片，支持 JPG/PNG/WebP',
-    popular: true,
-  },
-  {
-    name: 'power',
-    display_name: 'Power',
-    display_name_zh: '终极版',
-    credits: 80,
-    price_usd: 29.99,
-    price_per_credit: '$0.37/积分',
-    description: '高清图片，支持 JPG/PNG/WebP',
-    popular: false,
-  },
+  { name: 'starter', display_name: 'Starter', display_name_zh: '入门版', credits: 10, price_usd: 4.99, price_per_credit: '$0.50/积分', popular: false },
+  { name: 'pro', display_name: 'Pro', display_name_zh: '专业版', credits: 30, price_usd: 12.99, price_per_credit: '$0.43/积分', popular: true },
+  { name: 'power', display_name: 'Power', display_name_zh: '终极版', credits: 80, price_usd: 29.99, price_per_credit: '$0.37/积分', popular: false },
 ];
 
 const subscriptionPlans = [
-  {
-    name: 'basic_monthly',
-    display_name: 'Basic',
-    display_name_zh: '基础版',
-    credits: 25,
-    price_usd: 9.99,
-    period: '/月',
-    price_per_credit: '$0.40/次',
-    description: '高清图片，支持 JPG/PNG/WebP',
-    popular: false,
-    is_subscription: true,
-  },
-  {
-    name: 'premium_monthly',
-    display_name: 'Premium',
-    display_name_zh: '高级版',
-    credits: 60,
-    price_usd: 19.99,
-    period: '/月',
-    price_per_credit: '$0.33/次',
-    description: '高清图片，支持 JPG/PNG/WebP',
-    popular: true,
-    is_subscription: true,
-  },
+  { name: 'basic_monthly', display_name: 'Basic', display_name_zh: '基础版', credits: 25, price_usd: 9.99, period: '/月', price_per_credit: '$0.40/次', popular: false },
+  { name: 'premium_monthly', display_name: 'Premium', display_name_zh: '高级版', credits: 60, price_usd: 19.99, period: '/月', price_per_credit: '$0.33/次', popular: true },
 ];
 
 interface SelectedPlan {
@@ -98,13 +60,35 @@ export default function PricingPage() {
   }, [lang]);
 
   const getText = (zh: string, en: string) => lang === 'zh-CN' ? zh : en;
+  
+  // 获取套餐描述（根据语言）
+  const getPlanDescription = () => {
+    return planDescriptions[lang] || planDescriptions['en'];
+  };
 
-  const handlePurchase = (plan: any) => {
+  // 获取每积分价格文字
+  const getPricePerCredit = (price: number, credits: number, isSubscription: boolean) => {
+    const perCredit = (price / credits).toFixed(2);
+    if (lang === 'zh-CN') {
+      return isSubscription ? `$${perCredit}/次` : `$${perCredit}/积分`;
+    }
+    return `$${perCredit}/credit`;
+  };
+
+  // 获取套餐名称（根据语言）
+  const getPlanName = (plan: typeof oneTimePlans[0] | typeof subscriptionPlans[0]) => {
+    return lang === 'zh-CN' ? plan.display_name_zh : plan.display_name;
+  };
+
+  const handlePurchase = (plan: any, isSubscription: boolean) => {
     if (!session) {
       signIn("google");
       return;
     }
-    setSelectedPlan(plan);
+    setSelectedPlan({
+      ...plan,
+      is_subscription: isSubscription,
+    });
     setShowModal(true);
   };
 
@@ -197,15 +181,15 @@ export default function PricingPage() {
                 </div>
               )}
               <div className="text-center mb-4">
-                <h4 className="text-xl font-bold mb-2">{lang === 'zh-CN' ? plan.display_name_zh : plan.display_name}</h4>
+                <h4 className="text-xl font-bold mb-2">{getPlanName(plan)}</h4>
                 <div className="flex items-baseline justify-center gap-1">
                   <span className="text-4xl font-bold text-cyber-accent">${plan.price_usd}</span>
-                  <span className="text-cyber-muted">{plan.period}</span>
+                  <span className="text-cyber-muted">{lang === 'zh-CN' ? '/月' : '/month'}</span>
                 </div>
                 <div className="text-cyber-muted mt-1">{plan.credits} {getText('次/月', 'credits/month')}</div>
-                <div className="text-sm text-cyber-muted mt-1">{plan.price_per_credit}</div>
+                <div className="text-sm text-cyber-muted mt-1">{getPricePerCredit(plan.price_usd, plan.credits, true)}</div>
               </div>
-              <p className="text-center text-sm text-cyber-muted mb-6">{plan.description}</p>
+              <p className="text-center text-sm text-cyber-muted mb-6">{getPlanDescription()}</p>
               <ul className="space-y-3 mb-8">
                 <li className="flex items-center gap-2">
                   <span className="text-green-400">✓</span>
@@ -225,7 +209,7 @@ export default function PricingPage() {
                 </li>
               </ul>
               <button
-                onClick={() => handlePurchase(plan)}
+                onClick={() => handlePurchase(plan, true)}
                 className="w-full py-3 bg-cyber-accent hover:bg-cyber-accent/80 text-white rounded-lg font-medium transition-colors"
               >
                 {getText('订阅', 'Subscribe')}
@@ -258,12 +242,12 @@ export default function PricingPage() {
                 </div>
               )}
               <div className="text-center mb-4">
-                <h4 className="text-xl font-bold mb-2">{lang === 'zh-CN' ? plan.display_name_zh : plan.display_name}</h4>
+                <h4 className="text-xl font-bold mb-2">{getPlanName(plan)}</h4>
                 <div className="text-4xl font-bold text-cyber-accent">${plan.price_usd}</div>
                 <div className="text-cyber-muted mt-1">{plan.credits} {getText('积分', 'Credits')}</div>
-                <div className="text-sm text-cyber-muted mt-1">{plan.price_per_credit}</div>
+                <div className="text-sm text-cyber-muted mt-1">{getPricePerCredit(plan.price_usd, plan.credits, false)}</div>
               </div>
-              <p className="text-center text-sm text-cyber-muted mb-6">{plan.description}</p>
+              <p className="text-center text-sm text-cyber-muted mb-6">{getPlanDescription()}</p>
               <ul className="space-y-3 mb-8">
                 <li className="flex items-center gap-2">
                   <span className="text-green-400">✓</span>
@@ -283,7 +267,7 @@ export default function PricingPage() {
                 </li>
               </ul>
               <button
-                onClick={() => handlePurchase(plan)}
+                onClick={() => handlePurchase(plan, false)}
                 className="w-full py-3 bg-cyber-accent hover:bg-cyber-accent/80 text-white rounded-lg font-medium transition-colors"
               >
                 {getText('购买', 'Purchase')}
@@ -303,15 +287,15 @@ export default function PricingPage() {
             <div className="cyber-panel p-4 mb-6">
               <div className="flex justify-between mb-2">
                 <span className="text-cyber-muted">{getText('套餐', 'Plan')}</span>
-                <span className="font-bold">{lang === 'zh-CN' ? selectedPlan.display_name_zh : selectedPlan.display_name}</span>
+                <span className="font-bold">{getPlanName(selectedPlan)}</span>
               </div>
               <div className="flex justify-between mb-2">
                 <span className="text-cyber-muted">{getText('积分数量', 'Credits')}</span>
-                <span className="font-bold">{selectedPlan.credits} {selectedPlan.is_subscription ? '/月' : ''}</span>
+                <span className="font-bold">{selectedPlan.credits} {selectedPlan.is_subscription ? getText('/月', '/month') : ''}</span>
               </div>
               <div className="flex justify-between">
                 <span className="text-cyber-muted">{getText('价格', 'Price')}</span>
-                <span className="text-2xl font-bold text-cyber-accent">${selectedPlan.price_usd}{selectedPlan.period || ''}</span>
+                <span className="text-2xl font-bold text-cyber-accent">${selectedPlan.price_usd}{selectedPlan.is_subscription ? getText('/月', '/month') : ''}</span>
               </div>
               {selectedPlan.is_subscription && (
                 <div className="mt-4 pt-4 border-t border-cyber-border">
