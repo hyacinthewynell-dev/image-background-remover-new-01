@@ -149,8 +149,8 @@ export default function Home() {
           ) : (
             <>
               <div className="text-center mb-8">
-                <h2 className="text-3xl font-bold mb-3">{t.uploadTitle}</h2>
-                <p className="text-cyber-muted">{t.uploadSubtitle}</p>
+                <h2 className="text-3xl font-bold mb-3">{t.title}</h2>
+                <p className="text-cyber-muted">{t.subtitle}</p>
               </div>
 
               <UploadZone onFileSelect={handleFileSelect} status={status} />
@@ -197,3 +197,4 @@ export default function Home() {
     </main>
   );
 }
+
