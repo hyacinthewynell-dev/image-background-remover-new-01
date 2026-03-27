@@ -5,7 +5,6 @@ import { useSession, signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { Language, translations } from "@/lib/translations";
 import LanguageSelector from "@/components/LanguageSelector";
-import UserButton from "@/components/UserButton";
 
 const STORAGE_KEY = 'bg-remover-lang';
 
@@ -13,28 +12,28 @@ const plans = [
   {
     name: 'starter',
     display_name: 'Starter',
-    credits: 50,
-    price_usd: 0.99,
-    price_per_credit: '$0.02/积分',
-    description: '最低充值选项，适合轻度用户',
+    credits: 10,
+    price_usd: 4.99,
+    price_per_credit: '$0.50/积分',
+    description: '高清图片，支持 JPG/PNG/WebP',
     popular: false,
   },
   {
     name: 'pro',
     display_name: 'Pro',
-    credits: 300,
-    price_usd: 4.99,
-    price_per_credit: '$0.017/积分',
-    description: '适合专业用户，最划算',
+    credits: 30,
+    price_usd: 12.99,
+    price_per_credit: '$0.43/积分',
+    description: '高清图片，支持 JPG/PNG/WebP',
     popular: true,
   },
   {
     name: 'power',
     display_name: 'Power',
-    credits: 700,
-    price_usd: 9.99,
-    price_per_credit: '$0.014/积分',
-    description: '大宗采购，适合高频用户',
+    credits: 80,
+    price_usd: 29.99,
+    price_per_credit: '$0.37/积分',
+    description: '高清图片，支持 JPG/PNG/WebP',
     popular: false,
   },
 ];
@@ -129,7 +128,7 @@ export default function PricingPage() {
           <div className="flex items-center justify-between">
             <div>
               <h3 className="text-2xl font-bold mb-2">{getText('注册账户', 'Sign Up')}</h3>
-              <p className="text-cyber-muted">{getText('刚刚为新用户注册账户赠送3积分', 'Get 3 credits free when you sign up')}</p>
+              <p className="text-cyber-muted">{getText('新用户注册账户赠送3积分', 'Get 3 credits free when you sign up')}</p>
             </div>
             <div className="text-center">
               <div className="text-4xl font-bold text-green-400">3</div>
