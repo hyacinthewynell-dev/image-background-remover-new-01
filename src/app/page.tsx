@@ -77,7 +77,6 @@ export default function Home() {
         throw new Error(data.error || "Processing failed");
       }
 
-      // Deduct credit after successful processing
       if (session?.user?.id) {
         await deductCredit(session.user.id);
       }
@@ -153,10 +152,24 @@ export default function Home() {
                 <p className="text-cyber-muted">{t.subtitle}</p>
               </div>
 
-              <UploadZone onFileSelect={handleFileSelect} t={translations[lang]} />
+              {(status === "uploading" || status === "processing") && (
+                <StatusMessage status={status} fileName={fileName} t={t} />
+              )}
+
+              {status === "idle" && (
+                <UploadZone onFileSelect={handleFileSelect} t={t} />
+              )}
 
               {status === "error" && errorMessage && (
-                <StatusMessage type="error" message={errorMessage} onClose={handleReset} />
+                <div className="text-center py-8">
+                  <p className="text-red-400 mb-4">{errorMessage}</p>
+                  <button
+                    onClick={handleReset}
+                    className="px-6 py-3 bg-cyber-accent hover:bg-cyber-accent/80 text-white rounded-lg font-medium transition-colors"
+                  >
+                    Try Again
+                  </button>
+                </div>
               )}
 
               {resultImage && (
@@ -197,4 +210,3 @@ export default function Home() {
     </main>
   );
 }
-
