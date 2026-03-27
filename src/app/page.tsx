@@ -9,7 +9,7 @@ import StatusMessage from "@/components/StatusMessage";
 import LanguageSelector from "@/components/LanguageSelector";
 import UserButton from "@/components/UserButton";
 import { Language, translations } from "@/lib/translations";
-import { getUserCredits } from "@/lib/supabase";
+import { getUserCredits, deductCredit } from "@/lib/supabase";
 
 type Status = "idle" | "uploading" | "processing" | "success" | "error";
 
@@ -75,6 +75,11 @@ export default function Home() {
 
       if (!data.success) {
         throw new Error(data.error || "Processing failed");
+      }
+
+      // Deduct credit after successful processing
+      if (session?.user?.id) {
+        await deductCredit(session.user.id);
       }
 
       setResultImage(data.data.result);
