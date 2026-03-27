@@ -12,6 +12,7 @@ const plans = [
   {
     name: 'starter',
     display_name: 'Starter',
+    display_name_zh: '入门版',
     credits: 10,
     price_usd: 4.99,
     price_per_credit: '$0.50/积分',
@@ -21,6 +22,7 @@ const plans = [
   {
     name: 'pro',
     display_name: 'Pro',
+    display_name_zh: '专业版',
     credits: 30,
     price_usd: 12.99,
     price_per_credit: '$0.43/积分',
@@ -30,6 +32,7 @@ const plans = [
   {
     name: 'power',
     display_name: 'Power',
+    display_name_zh: '终极版',
     credits: 80,
     price_usd: 29.99,
     price_per_credit: '$0.37/积分',
@@ -41,6 +44,7 @@ const plans = [
 interface SelectedPlan {
   name: string;
   display_name: string;
+  display_name_zh: string;
   credits: number;
   price_usd: number;
 }
@@ -48,7 +52,7 @@ interface SelectedPlan {
 export default function PricingPage() {
   const { data: session } = useSession();
   const router = useRouter();
-  const [lang, setLang] = useState<Language>("en");
+  const [lang, setLang] = useState<Language>("zh-CN");
   const [showModal, setShowModal] = useState(false);
   const [selectedPlan, setSelectedPlan] = useState<SelectedPlan | null>(null);
   const t = translations[lang];
@@ -71,7 +75,13 @@ export default function PricingPage() {
       signIn("google");
       return;
     }
-    setSelectedPlan(plan);
+    setSelectedPlan({
+      name: plan.name,
+      display_name: plan.display_name,
+      display_name_zh: plan.display_name_zh,
+      credits: plan.credits,
+      price_usd: plan.price_usd,
+    });
     setShowModal(true);
   };
 
@@ -107,7 +117,7 @@ export default function PricingPage() {
                 onClick={() => signIn("google")}
                 className="px-4 py-2 text-sm bg-cyber-accent hover:bg-cyber-accent/80 text-white rounded-lg transition-colors"
               >
-                Sign In
+                {getText('登录', 'Sign In')}
               </button>
             )}
           </div>
@@ -160,13 +170,13 @@ export default function PricingPage() {
                   {getText('最受欢迎', 'Most Popular')}
                 </div>
               )}
-              <div className="text-center mb-6">
-                <h4 className="text-xl font-bold mb-2">{plan.display_name}</h4>
+              <div className="text-center mb-4">
+                <h4 className="text-xl font-bold mb-2">{lang === 'zh-CN' ? plan.display_name_zh : plan.display_name}</h4>
                 <div className="text-4xl font-bold text-cyber-accent">${plan.price_usd}</div>
                 <div className="text-cyber-muted mt-1">{plan.credits} {getText('积分', 'Credits')}</div>
                 <div className="text-sm text-cyber-muted mt-1">{plan.price_per_credit}</div>
               </div>
-              <p className="text-center text-cyber-muted mb-6">{plan.description}</p>
+              <p className="text-center text-sm text-cyber-muted mb-6">{plan.description}</p>
               <ul className="space-y-3 mb-8">
                 <li className="flex items-center gap-2">
                   <span className="text-green-400">✓</span>
@@ -204,7 +214,7 @@ export default function PricingPage() {
             <div className="cyber-panel p-4 mb-6">
               <div className="flex justify-between mb-2">
                 <span className="text-cyber-muted">{getText('套餐', 'Plan')}</span>
-                <span className="font-bold">{selectedPlan.display_name}</span>
+                <span className="font-bold">{lang === 'zh-CN' ? selectedPlan.display_name_zh : selectedPlan.display_name}</span>
               </div>
               <div className="flex justify-between mb-2">
                 <span className="text-cyber-muted">{getText('积分数量', 'Credits')}</span>
