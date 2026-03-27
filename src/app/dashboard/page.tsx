@@ -1,9 +1,11 @@
 "use client";
 
-import { useSession } from "next-auth/react";
+import { useSession, signOut } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { getUser, getTransactions, getPlans, getUserCredits } from "@/lib/supabase";
+import { Language, translations } from "@/lib/translations";
+import LanguageSelector from "@/components/LanguageSelector";
 
 export default function DashboardPage() {
   const { data: session, status } = useSession();
@@ -12,6 +14,9 @@ export default function DashboardPage() {
   const [transactions, setTransactions] = useState<any[]>([]);
   const [plans, setPlans] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [lang, setLang] = useState<Language>("en");
+
+  const t = translations[lang];
 
   useEffect(() => {
     if (status === "unauthenticated") {
@@ -50,7 +55,7 @@ export default function DashboardPage() {
 
   if (status === "loading" || loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
+      <div className="min-h-screen flex items-center justify-center bg-cyber-bg">
         <div className="text-cyber-muted">Loading...</div>
       </div>
     );
@@ -62,23 +67,42 @@ export default function DashboardPage() {
 
   return (
     <div className="min-h-screen bg-cyber-bg text-cyber-text">
-      <div className="max-w-6xl mx-auto px-4 py-12">
-        {/* Header */}
-        <div className="flex items-center justify-between mb-12">
-          <div>
-            <h1 className="text-3xl font-bold mb-2">Dashboard</h1>
-            <p className="text-cyber-muted">
-              Welcome back, {session.user?.name || "User"}
-            </p>
+      {/* Header */}
+      <header className="border-b border-cyber-border py-4 px-6">
+        <div className="max-w-6xl mx-auto flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-cyber-accent-dark to-cyber-accent flex items-center justify-center">
+              <span className="text-white font-bold text-sm">BG</span>
+            </div>
+            <h1 className="text-lg font-semibold text-cyber-text">Dashboard</h1>
           </div>
           <div className="flex items-center gap-4">
-            {session.user?.image && (
-              <img
-                src={session.user.image}
-                alt={session.user.name || ""}
-                className="w-12 h-12 rounded-full"
-              />
-            )}
+            <LanguageSelector currentLang={lang} onChange={setLang} />
+            <button
+              onClick={() => signOut()}
+              className="px-4 py-2 text-sm border border-cyber-border rounded-lg hover:bg-cyber-border/50 transition-colors"
+            >
+              Sign Out
+            </button>
+          </div>
+        </div>
+      </header>
+
+      <div className="max-w-6xl mx-auto px-4 py-12">
+        {/* Welcome */}
+        <div className="flex items-center gap-4 mb-8">
+          {session.user?.image && (
+            <img
+              src={session.user.image}
+              alt={session.user.name || ""}
+              className="w-16 h-16 rounded-full"
+            />
+          )}
+          <div>
+            <h2 className="text-2xl font-bold">
+              {t.welcome || "Welcome"}, {session.user?.name || "User"}
+            </h2>
+            <p className="text-cyber-muted">{session.user?.email}</p>
           </div>
         </div>
 
@@ -86,31 +110,29 @@ export default function DashboardPage() {
         <div className="cyber-panel p-8 mb-8">
           <div className="flex items-center justify-between">
             <div>
-              <h2 className="text-xl font-semibold mb-2">Your Credits</h2>
+              <h3 className="text-xl font-semibold mb-2">{t.yourCredits || "Your Credits"}</h3>
               <p className="text-cyber-muted text-sm">
-                Credits are used for image processing
+                {t.creditsDesc || "Credits are used for image processing"}
               </p>
             </div>
-            <div className="text-5xl font-bold text-cyber-accent">
-              {credits}
-            </div>
+            <div className="text-5xl font-bold text-cyber-accent">{credits}</div>
           </div>
           
           {credits === 0 && (
             <div className="mt-6 p-4 bg-red-500/10 border border-red-500/30 rounded-lg">
               <p className="text-red-400 text-sm">
-                You have no credits remaining. Please purchase more to continue using the service.
+                {t.noCredits || "You have no credits remaining. Please purchase more to continue using the service."}
               </p>
             </div>
           )}
         </div>
 
         {/* Pricing Plans */}
-        <h2 className="text-2xl font-bold mb-6">Purchase Credits</h2>
+        <h3 className="text-2xl font-bold mb-6">{t.purchaseCredits || "Purchase Credits"}</h3>
         <div className="grid md:grid-cols-3 gap-6 mb-12">
           {plans.filter(p => !p.is_subscription).map((plan) => (
             <div key={plan.id} className="cyber-panel p-6">
-              <h3 className="text-xl font-bold mb-2">{plan.display_name}</h3>
+              <h4 className="text-xl font-bold mb-2">{plan.display_name}</h4>
               <div className="mb-4">
                 <span className="text-3xl font-bold">${plan.price_usd}</span>
               </div>
@@ -118,21 +140,21 @@ export default function DashboardPage() {
                 <p>{plan.credits} credits</p>
               </div>
               <button
-                onClick={() => router.push(`/dashboard/checkout?plan=${plan.name}`)}
+                onClick={() => router.push(`/dashboard?plan=${plan.name}`)}
                 className="w-full py-3 bg-cyber-accent hover:bg-cyber-accent/80 text-white rounded-lg font-medium transition-colors"
               >
-                Purchase
+                {t.purchase || "Purchase"}
               </button>
             </div>
           ))}
         </div>
 
         {/* Transaction History */}
-        <h2 className="text-2xl font-bold mb-6">Transaction History</h2>
+        <h3 className="text-2xl font-bold mb-6">{t.transactionHistory || "Transaction History"}</h3>
         <div className="cyber-panel overflow-hidden">
           {transactions.length === 0 ? (
             <div className="p-8 text-center text-cyber-muted">
-              No transactions yet
+              {t.noTransactions || "No transactions yet"}
             </div>
           ) : (
             <div className="divide-y divide-cyber-border">
