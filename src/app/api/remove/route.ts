@@ -2,8 +2,6 @@ import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 
-export const runtime = "edge";
-
 const REMOVE_BG_API_URL = "https://api.remove.bg/v1.0/removebg";
 const MAX_FILE_SIZE = 10 * 1024 * 1024;
 const ALLOWED_TYPES = ["image/png", "image/jpeg", "image/webp"];
@@ -48,7 +46,6 @@ export async function POST(request: NextRequest) {
       );
     }
     
-    // Create Supabase client dynamically
     const { createClient } = await import("@supabase/supabase-js");
     const supabase = createClient(
       process.env.NEXT_PUBLIC_SUPABASE_URL!,
