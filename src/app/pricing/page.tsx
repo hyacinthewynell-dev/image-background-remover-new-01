@@ -9,7 +9,7 @@ import LanguageSelector from "@/components/LanguageSelector";
 const STORAGE_KEY = 'bg-remover-lang';
 
 // 套餐描述翻译
-const planDescriptions = {
+const planDescriptions: Record<Language, string> = {
   'zh-CN': '高清图片，支持 JPG/PNG/WebP',
   'en': 'HD images, supports JPG/PNG/WebP',
   'ja': 'HD画像、JPG/PNG/WebP対応',
@@ -17,17 +17,18 @@ const planDescriptions = {
   'es': 'Imágenes HD, soporta JPG/PNG/WebP',
   'fr': 'Images HD, supporte JPG/PNG/WebP',
   'de': 'HD-Bilder, unterstützt JPG/PNG/WebP',
+  'zh-TW': '高清圖片，支援 JPG/PNG/WebP',
 };
 
 const oneTimePlans = [
-  { name: 'starter', display_name: 'Starter', display_name_zh: '入门版', credits: 10, price_usd: 4.99, price_per_credit: '$0.50/积分', popular: false },
-  { name: 'pro', display_name: 'Pro', display_name_zh: '专业版', credits: 30, price_usd: 12.99, price_per_credit: '$0.43/积分', popular: true },
-  { name: 'power', display_name: 'Power', display_name_zh: '终极版', credits: 80, price_usd: 29.99, price_per_credit: '$0.37/积分', popular: false },
+  { name: 'starter', display_name: 'Starter', display_name_zh: '入门版', credits: 10, price_usd: 4.99, popular: false },
+  { name: 'pro', display_name: 'Pro', display_name_zh: '专业版', credits: 30, price_usd: 12.99, popular: true },
+  { name: 'power', display_name: 'Power', display_name_zh: '终极版', credits: 80, price_usd: 29.99, popular: false },
 ];
 
 const subscriptionPlans = [
-  { name: 'basic_monthly', display_name: 'Basic', display_name_zh: '基础版', credits: 25, price_usd: 9.99, period: '/月', price_per_credit: '$0.40/次', popular: false },
-  { name: 'premium_monthly', display_name: 'Premium', display_name_zh: '高级版', credits: 60, price_usd: 19.99, period: '/月', price_per_credit: '$0.33/次', popular: true },
+  { name: 'basic_monthly', display_name: 'Basic', display_name_zh: '基础版', credits: 25, price_usd: 9.99, popular: false },
+  { name: 'premium_monthly', display_name: 'Premium', display_name_zh: '高级版', credits: 60, price_usd: 19.99, popular: true },
 ];
 
 interface SelectedPlan {
@@ -61,23 +62,20 @@ export default function PricingPage() {
 
   const getText = (zh: string, en: string) => lang === 'zh-CN' ? zh : en;
   
-  // 获取套餐描述（根据语言）
   const getPlanDescription = () => {
     return planDescriptions[lang] || planDescriptions['en'];
   };
 
-  // 获取每积分价格文字
   const getPricePerCredit = (price: number, credits: number, isSubscription: boolean) => {
     const perCredit = (price / credits).toFixed(2);
-    if (lang === 'zh-CN') {
+    if (lang === 'zh-CN' || lang === 'zh-TW') {
       return isSubscription ? `$${perCredit}/次` : `$${perCredit}/积分`;
     }
     return `$${perCredit}/credit`;
   };
 
-  // 获取套餐名称（根据语言）
   const getPlanName = (plan: typeof oneTimePlans[0] | typeof subscriptionPlans[0]) => {
-    return lang === 'zh-CN' ? plan.display_name_zh : plan.display_name;
+    return lang === 'zh-CN' || lang === 'zh-TW' ? plan.display_name_zh : plan.display_name;
   };
 
   const handlePurchase = (plan: any, isSubscription: boolean) => {
@@ -184,7 +182,7 @@ export default function PricingPage() {
                 <h4 className="text-xl font-bold mb-2">{getPlanName(plan)}</h4>
                 <div className="flex items-baseline justify-center gap-1">
                   <span className="text-4xl font-bold text-cyber-accent">${plan.price_usd}</span>
-                  <span className="text-cyber-muted">{lang === 'zh-CN' ? '/月' : '/month'}</span>
+                  <span className="text-cyber-muted">{lang === 'zh-CN' || lang === 'zh-TW' ? '/月' : '/month'}</span>
                 </div>
                 <div className="text-cyber-muted mt-1">{plan.credits} {getText('次/月', 'credits/month')}</div>
                 <div className="text-sm text-cyber-muted mt-1">{getPricePerCredit(plan.price_usd, plan.credits, true)}</div>
