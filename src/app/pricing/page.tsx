@@ -10,11 +10,17 @@ import { getPlans } from "@/lib/supabase";
 
 const STORAGE_KEY = 'bg-remover-lang';
 
+const defaultPlans = [
+  { id: 1, name: 'starter', display_name: 'Starter', credits: 50, price_usd: 0.99, is_subscription: false },
+  { id: 2, name: 'pro', display_name: 'Pro', credits: 300, price_usd: 4.99, is_subscription: false },
+  { id: 3, name: 'power', display_name: 'Power', credits: 700, price_usd: 9.99, is_subscription: false },
+];
+
 export default function PricingPage() {
   const { data: session } = useSession();
   const router = useRouter();
   const [lang, setLang] = useState<Language>("en");
-  const [plans, setPlans] = useState<any[]>([]);
+  const [plans, setPlans] = useState<any[]>(defaultPlans);
   const t = translations[lang];
 
   useEffect(() => {
@@ -22,20 +28,25 @@ export default function PricingPage() {
     if (savedLang && translations[savedLang]) {
       setLang(savedLang);
     }
-    loadPlans();
+    fetchPlans();
   }, []);
 
   useEffect(() => {
     localStorage.setItem(STORAGE_KEY, lang);
   }, [lang]);
 
-  async function loadPlans() {
-    const planList = await getPlans();
-    setPlans(planList);
+  async function fetchPlans() {
+    try {
+      const data = await getPlans();
+      if (data && data.length > 0) {
+        setPlans(data);
+      }
+    } catch (e) {
+      console.error("Failed to fetch plans:", e);
+    }
   }
 
   const oneTimePlans = plans.filter(p => !p.is_subscription);
-  const subscriptionPlans = plans.filter(p => p.is_subscription);
 
   return (
     <div className="min-h-screen bg-cyber-bg text-cyber-text">
@@ -87,7 +98,7 @@ export default function PricingPage() {
         </h3>
         <div className="grid md:grid-cols-3 gap-8 mb-16">
           {oneTimePlans.map((plan) => (
-            <div key={plan.id} className="cyber-panel p-8 relative">
+            <div key={plan.id || plan.name} className="cyber-panel p-8 relative">
               {plan.name === 'pro' && (
                 <div className="absolute -top-4 left-1/2 -translate-x-1/2 px-4 py-1 bg-cyber-accent text-white text-sm rounded-full">
                   {lang === 'zh-CN' ? '最受欢迎' : 'Most Popular'}
