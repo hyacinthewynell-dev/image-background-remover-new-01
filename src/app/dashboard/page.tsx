@@ -7,6 +7,8 @@ import { getUser, getTransactions, getPlans, getUserCredits } from "@/lib/supaba
 import { Language, translations } from "@/lib/translations";
 import LanguageSelector from "@/components/LanguageSelector";
 
+const STORAGE_KEY = 'bg-remover-lang';
+
 export default function DashboardPage() {
   const { data: session, status } = useSession();
   const router = useRouter();
@@ -17,6 +19,19 @@ export default function DashboardPage() {
   const [lang, setLang] = useState<Language>("en");
 
   const t = translations[lang];
+
+  // Load language from localStorage on mount
+  useEffect(() => {
+    const savedLang = localStorage.getItem(STORAGE_KEY) as Language;
+    if (savedLang && translations[savedLang]) {
+      setLang(savedLang);
+    }
+  }, []);
+
+  // Save language to localStorage when changed
+  useEffect(() => {
+    localStorage.setItem(STORAGE_KEY, lang);
+  }, [lang]);
 
   useEffect(() => {
     if (status === "unauthenticated") {
@@ -100,7 +115,7 @@ export default function DashboardPage() {
           )}
           <div>
             <h2 className="text-2xl font-bold">
-              {t.welcome || "Welcome"}, {session.user?.name || "User"}
+              {t.welcome}, {session.user?.name || "User"}
             </h2>
             <p className="text-cyber-muted">{session.user?.email}</p>
           </div>
@@ -110,25 +125,21 @@ export default function DashboardPage() {
         <div className="cyber-panel p-8 mb-8">
           <div className="flex items-center justify-between">
             <div>
-              <h3 className="text-xl font-semibold mb-2">{t.yourCredits || "Your Credits"}</h3>
-              <p className="text-cyber-muted text-sm">
-                {t.creditsDesc || "Credits are used for image processing"}
-              </p>
+              <h3 className="text-xl font-semibold mb-2">{t.yourCredits}</h3>
+              <p className="text-cyber-muted text-sm">{t.creditsDesc}</p>
             </div>
             <div className="text-5xl font-bold text-cyber-accent">{credits}</div>
           </div>
           
           {credits === 0 && (
             <div className="mt-6 p-4 bg-red-500/10 border border-red-500/30 rounded-lg">
-              <p className="text-red-400 text-sm">
-                {t.noCredits || "You have no credits remaining. Please purchase more to continue using the service."}
-              </p>
+              <p className="text-red-400 text-sm">{t.noCredits}</p>
             </div>
           )}
         </div>
 
         {/* Pricing Plans */}
-        <h3 className="text-2xl font-bold mb-6">{t.purchaseCredits || "Purchase Credits"}</h3>
+        <h3 className="text-2xl font-bold mb-6">{t.purchaseCredits}</h3>
         <div className="grid md:grid-cols-3 gap-6 mb-12">
           {plans.filter(p => !p.is_subscription).map((plan) => (
             <div key={plan.id} className="cyber-panel p-6">
@@ -143,18 +154,18 @@ export default function DashboardPage() {
                 onClick={() => router.push(`/dashboard?plan=${plan.name}`)}
                 className="w-full py-3 bg-cyber-accent hover:bg-cyber-accent/80 text-white rounded-lg font-medium transition-colors"
               >
-                {t.purchase || "Purchase"}
+                {t.purchase}
               </button>
             </div>
           ))}
         </div>
 
         {/* Transaction History */}
-        <h3 className="text-2xl font-bold mb-6">{t.transactionHistory || "Transaction History"}</h3>
+        <h3 className="text-2xl font-bold mb-6">{t.transactionHistory}</h3>
         <div className="cyber-panel overflow-hidden">
           {transactions.length === 0 ? (
             <div className="p-8 text-center text-cyber-muted">
-              {t.noTransactions || "No transactions yet"}
+              {t.noTransactions}
             </div>
           ) : (
             <div className="divide-y divide-cyber-border">
