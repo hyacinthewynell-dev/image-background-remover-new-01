@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { useSession, signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 import { Language, translations } from "@/lib/translations";
 import LanguageSelector from "@/components/LanguageSelector";
 import { PayPalButtons, PayPalScriptProvider } from "@paypal/react-paypal-js";
@@ -160,12 +161,12 @@ export default function PricingPage() {
     <div className="min-h-screen bg-cyber-bg text-cyber-text">
       <header className="border-b border-cyber-border py-4 px-6">
         <div className="max-w-6xl mx-auto flex items-center justify-between">
-          <div className="flex items-center gap-3">
+          <Link href="/" className="flex items-center gap-3 hover:opacity-80 transition-opacity">
             <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-cyber-accent-dark to-cyber-accent flex items-center justify-center">
               <span className="text-white font-bold text-sm">BG</span>
             </div>
             <h1 className="text-lg font-semibold text-cyber-text">{t.title}</h1>
-          </div>
+          </Link>
           <div className="flex items-center gap-4">
             <LanguageSelector currentLang={lang} onChange={setLang} />
             {session ? (
@@ -332,7 +333,7 @@ export default function PricingPage() {
                     createOrder={createPayPalOrder}
                     onApprove={(data) => handlePayPalSuccess(data.orderID)}
                     onError={(err) => {
-                      console.error("PayPal error:", err);
+                      console.error("Paypal error:", err);
                       setErrorMessage(getText('支付失败，请重试', 'Payment failed, please try again'));
                     }}
                     onCancel={() => {
