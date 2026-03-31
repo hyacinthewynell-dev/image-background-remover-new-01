@@ -119,11 +119,12 @@ export default function PricingPage() {
           router.push("/dashboard");
         }, 2000);
       } else {
-        throw new Error("Failed to capture payment");
+        const data = await response.json();
+        throw new Error(data.error || "Failed to capture payment");
       }
-    } catch (error) {
+    } catch (error: any) {
       setPaymentStatus('error');
-      setErrorMessage(getText('支付捕获失败', 'Payment capture failed'));
+      setErrorMessage(error.message || getText('支付捕获失败', 'Payment capture failed'));
     }
   };
 
@@ -145,6 +146,12 @@ export default function PricingPage() {
     if (data.orderId) return data.orderId;
     if (data.subscriptionId) return data.subscriptionId;
     throw new Error(data.error || "Failed to create order");
+  };
+
+  const closeModal = () => {
+    if (paymentStatus !== 'processing') {
+      setShowModal(false);
+    }
   };
 
   return (
@@ -263,16 +270,34 @@ export default function PricingPage() {
       </div>
 
       {showModal && selectedPlan && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-          <div className="bg-cyber-panel rounded-xl p-8 max-w-md w-full">
+        <div 
+          className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4"
+          onClick={(e) => { if (e.target === e.currentTarget) closeModal(); }}
+        >
+          <div className="bg-cyber-panel rounded-xl p-8 max-w-md w-full relative">
             {paymentStatus === 'success' ? (
               <div className="text-center">
                 <div className="text-6xl mb-4">✅</div>
                 <h3 className="text-2xl font-bold mb-2">{getText('支付成功!', 'Payment Successful!')}</h3>
                 <p className="text-cyber-muted">{getText('积分已添加到您的账户', 'Credits added to your account')}</p>
+                <p className="text-cyber-muted text-sm mt-2">{getText('正在跳转到Dashboard...', 'Redirecting to Dashboard...')}</p>
+              </div>
+            ) : paymentStatus === 'processing' ? (
+              <div className="text-center">
+                <div className="text-6xl mb-4">⏳</div>
+                <h3 className="text-2xl font-bold mb-2">{getText('处理中...', 'Processing...')}</h3>
+                <p className="text-cyber-muted">{getText('请稍候，不要关闭页面', 'Please wait, do not close this page')}</p>
               </div>
             ) : (
               <>
+                <button
+                  onClick={closeModal}
+                  className="absolute top-4 right-4 text-gray-500 hover:text-gray-700 text-xl"
+                  disabled={paymentStatus === 'processing'}
+                >
+                  ×
+                </button>
+                
                 <h3 className="text-2xl font-bold mb-4">
                   {selectedPlan.is_subscription ? getText('确认订阅', 'Confirm Subscription') : getText('确认购买', 'Confirm Purchase')}
                 </h3>
@@ -292,7 +317,9 @@ export default function PricingPage() {
                 </div>
 
                 {paymentStatus === 'error' && (
-                  <div className="text-red-500 text-sm mb-4">{errorMessage}</div>
+                  <div className="text-red-500 text-sm mb-4 p-3 bg-red-50 rounded-lg">
+                    {errorMessage}
+                  </div>
                 )}
 
                 <PayPalScriptProvider options={{ 
@@ -303,16 +330,15 @@ export default function PricingPage() {
                     style={{ layout: "vertical", color: "blue", shape: "rect" }}
                     createOrder={createPayPalOrder}
                     onApprove={(data) => handlePayPalSuccess(data.orderID)}
-                    onError={() => setErrorMessage(getText('支付失败', 'Payment failed'))}
+                    onError={(err) => {
+                      console.error("PayPal error:", err);
+                      setErrorMessage(getText('支付失败，请重试', 'Payment failed, please try again'));
+                    }}
+                    onCancel={() => {
+                      setErrorMessage(getText('支付已取消', 'Payment cancelled'));
+                    }}
                   />
                 </PayPalScriptProvider>
-
-                <button
-                  onClick={() => setShowModal(false)}
-                  className="mt-4 w-full py-3 border border-cyber-border rounded-lg hover:bg-cyber-border/50 transition-colors"
-                >
-                  {getText('取消', 'Cancel')}
-                </button>
               </>
             )}
           </div>
