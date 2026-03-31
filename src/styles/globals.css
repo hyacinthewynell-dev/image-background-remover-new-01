@@ -32,6 +32,37 @@ body {
   min-height: 100vh;
 }
 
+/* Text colors */
+.text-cyber-text {
+  color: var(--cyber-text);
+}
+
+.text-cyber-muted {
+  color: var(--cyber-muted);
+}
+
+.text-cyber-accent {
+  color: var(--cyber-accent);
+}
+
+/* Border colors */
+.border-cyber-border {
+  border-color: var(--cyber-border);
+}
+
+/* Background colors */
+.bg-cyber-bg {
+  background-color: var(--cyber-bg);
+}
+
+.bg-cyber-panel {
+  background-color: var(--cyber-panel);
+}
+
+.bg-cyber-border {
+  background-color: var(--cyber-border);
+}
+
 /* Checkerboard pattern for transparent preview */
 .checkerboard {
   background-image:
