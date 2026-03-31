@@ -42,13 +42,15 @@ interface SelectedPlan {
   is_subscription: boolean;
 }
 
+type PaymentStatus = 'idle' | 'processing' | 'success' | 'error';
+
 export default function PricingPage() {
   const { data: session } = useSession();
   const router = useRouter();
   const [lang, setLang] = useState<Language>("zh-CN");
   const [showModal, setShowModal] = useState(false);
   const [selectedPlan, setSelectedPlan] = useState<SelectedPlan | null>(null);
-  const [paymentStatus, setPaymentStatus] = useState<'idle' | 'processing' | 'success' | 'error'>('idle');
+  const [paymentStatus, setPaymentStatus] = useState<PaymentStatus>('idle');
   const [errorMessage, setErrorMessage] = useState("");
   const t = translations[lang];
 
@@ -293,7 +295,6 @@ export default function PricingPage() {
                 <button
                   onClick={closeModal}
                   className="absolute top-4 right-4 text-gray-500 hover:text-gray-700 text-xl"
-                  disabled={paymentStatus === 'processing'}
                 >
                   ×
                 </button>
